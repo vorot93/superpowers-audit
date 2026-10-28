@@ -47,12 +47,12 @@ for (const id of skillIDs) {
     ['appended requirement', body + '\nAdditional project requirement.\n'],
     ['same-ID replacement', 'Use this project-specific workflow instead.\n'],
     ['audit words', 'This body mentions superpowers-audit but is not supported.\n'],
-    ['marker only', `<!-- opencode-superpowers-audit:unavailable:${id} -->\n${body}`],
+    ['marker only', `<!-- superpowers-audit:unavailable:${id} -->\n${body}`],
     ['unknown CRLF', '# Local workflow\r\nKeep these bytes.\r\n'],
     ['one changed sentence', mutateSentence(id, body)],
   ]) {
     test(`${id}: ${name} stays incompatible with original bytes below one notice`, () => {
-      const notice = `<!-- opencode-superpowers-audit:unavailable:${id} -->\n`
+      const notice = `<!-- superpowers-audit:unavailable:${id} -->\n`
         + '## Audit integration unavailable\n'
         + `Tell the human that automatic audit integration for ${id} is unavailable\n`
         + 'for this definition. Reason: Unsupported Superpowers definition.\n'

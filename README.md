@@ -26,7 +26,7 @@ Add the plugin to `opencode.json(c)` **after Superpowers**:
   "$schema": "https://opencode.ai/config.json",
   "plugins": [
     "github:obra/superpowers",
-    "github:vorot93/opencode-superpowers-audit"
+    "github:vorot93/superpowers-audit"
   ]
 }
 ```
@@ -48,7 +48,7 @@ Re-adding the same target preserves its existing position in the configuration.
 The same repository is a Claude Code plugin and a single-plugin marketplace:
 
 ```text
-/plugin marketplace add vorot93/opencode-superpowers-audit
+/plugin marketplace add vorot93/superpowers-audit
 /plugin install superpowers-audit@superpowers-audit
 /plugin configure superpowers-audit@superpowers-audit
 ```
@@ -123,7 +123,7 @@ placeholders; replace them with explicit choices from your OpenCode model catalo
   "plugins": [
     "github:obra/superpowers",
     {
-      "package": "github:vorot93/opencode-superpowers-audit",
+      "package": "github:vorot93/superpowers-audit",
       "options": {
         "reviewers": {
           "provider/writer-model": "other/reviewer-model#high"

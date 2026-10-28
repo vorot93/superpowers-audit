@@ -12,7 +12,7 @@ orchestrator.
 Keep these documents evergreen: record non-obvious constraints and decisions,
 not task reports, test-run inventories, or facts evident from the code. Correct
 stale guidance in the same change. Process artifacts, live evidence, and disposable
-verification caches belong in `~/.superpowers/opencode-superpowers-audit/`; remove
+verification caches belong in `~/.superpowers/superpowers-audit/`; remove
 disposable fixtures after verification. A checkout-local `.superpowers` link is
 optional and must resolve to that external directory if used.
 

@@ -10,7 +10,7 @@ const skillURL = new URL('../skills/superpowers-audit/SKILL.md', import.meta.url
 const dispatchURL = new URL('../skills/superpowers-audit/references/opencode.md', import.meta.url);
 
 export default {
-  id: 'opencode-superpowers-audit',
+  id: 'superpowers-audit',
   async setup(ctx) {
     const options = parseOptions(ctx.options);
     const { name, description, body } = parseSkillFile(readFileSync(skillURL, 'utf8'));

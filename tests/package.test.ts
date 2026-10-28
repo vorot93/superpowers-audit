@@ -24,7 +24,7 @@ async function run(command: string[], cwd: string) {
 }
 
 beforeAll(async () => {
-  const parent = join(homedir(), '.superpowers/opencode-superpowers-audit/verification');
+  const parent = join(homedir(), '.superpowers/superpowers-audit/verification');
   await mkdir(parent, { recursive: true });
   workspace = await mkdtemp(join(parent, 'package-test-'));
   const checkout = join(workspace, 'checkout');
@@ -54,7 +54,7 @@ test('the manifest has no hooks that trigger npm Git preparation', () => {
 
 test('a source-only tarball loads with production dependencies and registers the audit', async () => {
   const { default: plugin } = await import(new URL('index.js', packed).href);
-  expect(plugin.id).toBe('opencode-superpowers-audit');
+  expect(plugin.id).toBe('superpowers-audit');
   const host = registry();
   await plugin.setup(pluginContext(host, { prompt: async () => { throw new Error('Unexpected prompt'); } }).ctx);
   expect(host.commands.has('audit')).toBe(true);

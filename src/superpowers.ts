@@ -134,7 +134,7 @@ export function adaptSkill(id: SupportedSkill, content: string): SkillAdaptation
 }
 
 export function withIntegrationNotice(id: SupportedSkill, content: string, reason: string): string {
-  const marker = `<!-- opencode-superpowers-audit:unavailable:${id} -->`;
+  const marker = `<!-- superpowers-audit:unavailable:${id} -->`;
   const notice = (message: string) => `${marker}\n## Audit integration unavailable\n`
     + `Tell the human that automatic audit integration for ${id} is unavailable\n`
     + `for this definition. Reason: ${message}\n`

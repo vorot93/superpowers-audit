@@ -18,7 +18,7 @@ const sources = () => [
 ];
 
 async function check(input: unknown, skills = sources(), replay?: (skills: Skill.Info[]) => void) {
-  const parent = join(homedir(), '.superpowers/opencode-superpowers-audit/verification');
+  const parent = join(homedir(), '.superpowers/superpowers-audit/verification');
   await mkdir(parent, { recursive: true });
   const directory = await mkdtemp(join(parent, 'checker-test-'));
   const previous = { output: process.env.AUDIT_CHECK_OUTPUT, input: process.env.AUDIT_CHECK_EXPECTATIONS };
