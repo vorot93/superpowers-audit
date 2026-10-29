@@ -1,15 +1,15 @@
-# Superpowers 7.0.0 fixtures
+# Superpowers 7.0.1 fixtures
 
 Unmodified upstream files from Jesse Vincent's
 [Superpowers](https://github.com/obra/superpowers), licensed under MIT; see the
-adjacent LICENSE. The captured package manifest declares version 7.0.0; its
+adjacent LICENSE. The captured package manifest declares version 7.0.1; its
 package lock resolves immutable upstream revision
-`bb92a77741419a4ab5f06e711a283343f1ada0c3`. Use that revision, not the package
+`2ce8aa15d05bd57213e6f746f953aafb7ded7a8b`. Use that revision, not the package
 version or a transient cache directory, to recover upstream provenance.
 
 | Fixture | Upstream path | Original SHA-256 |
 | --- | --- | --- |
-| brainstorming.md | skills/brainstorming/SKILL.md | 6ee10d1481b8a2580d5336ff66c5c08acc9d4b251b13bbc3bfd31be99c261d43 |
+| brainstorming.md | skills/brainstorming/SKILL.md | 61a7ef918652108c76a3fd01e02dd92d39996c6b46d4cb2819cbd03f6c45e46a |
 | writing-plans.md | skills/writing-plans/SKILL.md | a6c67c1900064347c2a329990dd3c555657c51c3ec53b259a08aa01a2c26139a |
 
 Canonical body hashes are the `supportedHashes` baseline pins in

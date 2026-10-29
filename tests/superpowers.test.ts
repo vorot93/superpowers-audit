@@ -7,10 +7,10 @@ import { expected, fixture, mutateSentence, skillIDs } from './support/fixtures.
 const hash = (text: string) => createHash('sha256').update(text).digest('hex');
 
 test('fixture provenance retains the immutable upstream revision and complete-file digests', () => {
-  const root = new URL('./fixtures/superpowers-7.0.0/', import.meta.url);
+  const root = new URL('./fixtures/superpowers-7.0.1/', import.meta.url);
   const provenance = readFileSync(new URL('README.md', root), 'utf8');
   expect(provenance).toContain('https://github.com/obra/superpowers');
-  expect(provenance).toContain('bb92a77741419a4ab5f06e711a283343f1ada0c3');
+  expect(provenance).toContain('2ce8aa15d05bd57213e6f746f953aafb7ded7a8b');
   for (const id of skillIDs) {
     const raw = readFileSync(new URL(`${id}.md`, root));
     const digest = createHash('sha256').update(raw).digest('hex');
@@ -93,7 +93,7 @@ test('transformed handoffs include actual outcomes, reports, and renewed review 
 
 test('written designs preserve the builder check before writer review and audit', () => {
   const content = adaptSkill('brainstorming', fixture('brainstorming')).content;
-  const builder = content.indexOf('**Builder check:**');
+  const builder = content.indexOf('**Builder check** (for a project):');
   const selfReview = content.indexOf('## Spec Self-Review');
   const audit = content.indexOf('## Adversarial Review');
   const handoff = content.indexOf('## Human Document Review');
@@ -105,19 +105,21 @@ test('written designs preserve the builder check before writer review and audit'
   expect(content).toContain('That is the only round of questions the builder check produces.');
 });
 
-test('automatic review does not alter v7 quick-task, opt-out, small-change, or spike routes', () => {
+test('document review preserves quick-task, opt-out, and spike routes', () => {
   const original = fixture('brainstorming');
   const content = adaptSkill('brainstorming', original).content;
-  const designStart = original.indexOf('## The Written Design');
-  const gateStart = original.indexOf('<HARD-GATE>');
-  const gateEnd = original.indexOf('After a project\'s document');
-  expect(designStart).toBeGreaterThanOrEqual(0);
-  expect(gateStart).toBeGreaterThanOrEqual(0);
-  expect(gateEnd).toBeGreaterThanOrEqual(0);
-  expect(gateEnd).toBeGreaterThan(gateStart);
-  expect(content.slice(0, designStart)).toBe(original.slice(0, designStart));
-  const exceptions = original.slice(gateStart, gateEnd);
-  expect(content).toContain(exceptions);
+  for (const [start, end] of [
+    ['- **Everything that matters', 'Before you start implementing'],
+    ['- **They didn\'t:**', "That's the whole message."],
+    ['**Spike to feel things out.**', '## Play It Back'],
+    ['<HARD-GATE>', 'After the design doc is approved'],
+  ]) {
+    const from = original.indexOf(start!);
+    const to = original.indexOf(end!, from);
+    expect(from).toBeGreaterThanOrEqual(0);
+    expect(to).toBeGreaterThan(from);
+    expect(content).toContain(original.slice(from, to));
+  }
 });
 
 test('builder promise scopes its one return to builder questions, not audit questions', () => {
@@ -127,11 +129,28 @@ test('builder promise scopes its one return to builder questions, not audit ques
   expect(content).toContain('Without a subagent tool, read the document as that builder yourself.');
 });
 
-test('design audit and human handoff explicitly apply only to written projects', () => {
-  const content = adaptSkill('brainstorming', fixture('brainstorming')).content;
-  expect(content).toContain('## Adversarial Review\n\nFor a written project design,');
-  expect(content).toContain('## Human Document Review\n\nFor a written project design,');
-  expect(content).toContain('confirmed conversational intent/decisions and human answers');
+test('short designs skip only the builder, and both sizes reach reviewed human handoff', () => {
+  for (const content of [expected('brainstorming'), adaptSkill('brainstorming', fixture('brainstorming')).content]) {
+    const flat = content.replace(/\s+/g, ' ');
+    expect(flat).toContain('Short designs omit the builder check, then receive Spec Self-Review, Adversarial Review, and Human Document Review.');
+    expect(flat).toContain('Full designs complete the builder check before that sequence.');
+    expect(flat).toContain('agreed short/full size and completeness bar');
+    expect(flat).toContain('builder check, self-review, and a fresh audit, then obtain human approval of the full current design');
+    expect(flat).not.toContain('goes straight to your human partner, without the builder check');
+    expect(flat).not.toContain('For software, invoke superpowers:writing-plans');
+    expect(flat).toContain('This handoff applies to software and non-software designs alike.');
+  }
+});
+
+test('brainstorming loads question review before even a single mandatory approach is presented', () => {
+  for (const content of [expected('brainstorming'), adaptSkill('brainstorming', fixture('brainstorming')).content]) {
+    const flat = content.replace(/\s+/g, ' ');
+    expect(content.indexOf('## Question Review')).toBeLessThan(content.indexOf('## Look Before You Ask'));
+    expect(flat).toContain('Throughout active brainstorming, including reentry, load the native `superpowers-audit` skill before presenting');
+    expect(flat).toContain('**Lay out the approaches.** Complete Question Review before presenting this message, including when only one approach is viable.');
+    expect(flat).toContain("writing-plans' execution-method menu is exempt");
+    expect(flat).toContain('menus actually presented while brainstorming is active still receive Question Review');
+  }
 });
 
 test('plan self-review fixes missing tasks before audit dispatch', () => {

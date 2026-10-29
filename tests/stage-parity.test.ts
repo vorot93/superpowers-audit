@@ -12,6 +12,10 @@ const flat = (text: string) => text.replace(/\s+/g, ' ');
 
 const sharedStages: Record<SupportedSkill, readonly string[]> = {
   brainstorming: [
+    'Question Review',
+    'Spec Self-Review',
+    'Adversarial Review',
+    'Human Document Review',
     'builder check',
     'self-review',
     'superpowers-audit',
@@ -30,12 +34,14 @@ const sharedStages: Record<SupportedSkill, readonly string[]> = {
   ],
 };
 
-// Upstream 7.0.0 steps each amendment quotes as superseded.
+// Upstream 7.0.1 steps each amendment quotes as superseded.
 const superseded: Record<SupportedSkill, readonly string[]> = {
   brainstorming: [
     "Don't hand over the document until the check is back.",
     'then hand it over with a short list of the calls you made',
-    "After a project's document is approved, the next step is the plan.",
+    '3. Get their approval of that doc.',
+    'For a small change, the short design covers the same points in a line or two each and goes straight to your human partner, without the builder check.',
+    'After the design doc is approved, the next step is the plan: invoke superpowers:writing-plans and no other skill.',
   ],
   'writing-plans': [
     'No need to re-review — just fix and move on.',
@@ -65,10 +71,10 @@ test('shared stage strings appear in both hosts', () => {
 test('Claude Code amendments are complete on their own', () => {
   const brainstorming = amendment('brainstorming');
   expectInOrder(brainstorming, [
-    'builder check', 'self-review', 'superpowers-audit:superpowers-audit', 'Do you approve this design for planning?',
+    '### Spec Self-Review', '### Adversarial Review', '### Human Document Review', 'Do you approve this design for planning?',
   ]);
   for (const route of ['quick, clear task', 'small change', 'skip the questions', 'spike']) {
-    expect(brainstorming).toContain(route);
+    expect(flat(brainstorming)).toContain(route);
   }
   expectInOrder(amendment('writing-plans'), ['superpowers-audit:superpowers-audit', 'Execution Handoff']);
 
@@ -79,5 +85,21 @@ test('Claude Code amendments are complete on their own', () => {
       expect(flat(fixture(id))).toContain(step);
       expect(flat(amendment(id))).toContain(step);
     }
+  }
+});
+
+test('both authoring hosts explicitly gate short/full designs and every mandatory approaches presentation', () => {
+  for (const body of [expected('brainstorming'), amendment('brainstorming')]) {
+    const text = flat(body);
+    expect(text).toContain('Short designs omit the builder check, then receive Spec Self-Review, Adversarial Review, and Human Document Review.');
+    expect(text).toContain('Full designs complete the builder check before that sequence.');
+    expect(text).toContain('agreed short/full size and completeness bar');
+    expect(text).toContain('including one viable approach with reasons alternatives were ruled out');
+    expect(text).toContain('before showing it');
+    expect(text).toContain('including reentry');
+    expect(text).toContain("writing-plans' execution-method menu is exempt");
+    expect(text).not.toContain('Only a project with a written design');
+    expect(text).not.toContain('small change described in chat');
+    expect(text).not.toContain('For software, invoke');
   }
 });

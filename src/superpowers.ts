@@ -7,11 +7,11 @@ export interface SkillAdaptation {
   reason?: string;
 }
 
-// Superpowers 7.0.0 bodies live only in attributed tests. Normalize only CRLF.
+// Superpowers 7.0.1 bodies live only in attributed tests. Normalize only CRLF.
 export const supportedHashes: Record<SupportedSkill, { baseline: string; transformed: string }> = {
   brainstorming: {
-    baseline: '7066acbd55d8507328effff41bcf611eafca117c5bd7b9ac7fa545096132533a',
-    transformed: 'c9b3c5bbf486330438374cadfc7608af1f3ffabf9150e26af13612a188ac326b',
+    baseline: '8e43c8181a17642ac8c8b6e1c3fa29294ef5d3fa64f67eaa917ff709298a0b96',
+    transformed: '912eca77a6ea1b5e599c475fb43052edb86898c85c6ca878a355768b3b9df0e4',
   },
   'writing-plans': {
     baseline: '1fa01b954171b1d2b8bc0208dfbc6a01edf8a2ca715d18f76f043952e37e744f',
@@ -21,6 +21,52 @@ export const supportedHashes: Record<SupportedSkill, { baseline: string; transfo
 
 const edits: Record<SupportedSkill, readonly (readonly [string, string])[]> = {
   brainstorming: [
+    [
+      '3. Get their approval of that doc.',
+      '3. Complete the applicable builder check, Spec Self-Review, and Adversarial\n'
+        + '   Review, then get their approval of the current doc (see Human Document Review).',
+    ],
+    [
+      '## Look Before You Ask',
+      '## Question Review\n\n'
+        + 'Throughout active brainstorming, including reentry, load the native\n'
+        + '`superpowers-audit` skill before presenting a question or decision presentation\n'
+        + 'that offers or compares two or more explicit alternatives, in a tool or prose.\n'
+        + 'Also review every **Lay out the approaches** presentation before showing it,\n'
+        + 'including one viable approach with reasons alternatives were ruled out.\n'
+        + "Follow the shared skill's question workflow for self-review, saved presentation,\n"
+        + 'independent review, report, version matching, and explicit per-question overrides.\n'
+        + 'Question approval permits presentation, not an answer or design approval.\n\n'
+        + 'Keep open questions and ordinary single recommendations or size suggestions;\n'
+        + 'they need no question audit unless they compare alternatives or are the mandatory\n'
+        + 'approaches presentation. Quick-task, question opt-out, and throwaway-spike routes\n'
+        + 'retain their document-stage exemptions; menus actually presented while\n'
+        + 'brainstorming is active still receive Question Review. This stage includes builder\n'
+        + "and audit clarifications. It ends at the handoff to planning: writing-plans'\n"
+        + 'execution-method menu is exempt. Reentry into brainstorming restores this stage.\n\n'
+        + '## Look Before You Ask',
+    ],
+    [
+      '**Lay out the approaches.** Once you understand what they want, and',
+      '**Lay out the approaches.** Complete Question Review before presenting this message,\n'
+        + 'including when only one approach is viable. Once you understand what they want, and',
+    ],
+    [
+      'If it grows mid-task, stop, say so, and step up a size.',
+      'If it grows mid-task, stop, say so, and step up a size.\n'
+        + 'If a short design becomes project-sized, write the full design, complete its\n'
+        + 'builder check, self-review, and a fresh audit, then obtain human approval of the\n'
+        + 'full current design. Earlier short-design review or approval does not cover growth.',
+    ],
+    [
+      'For a small change, the short design covers the same points in a line\n'
+        + 'or two each and goes straight to your human partner, without the\nbuilder check.',
+      'For a small change, the short design covers the same points in a line or two each.\n'
+        + 'Short designs omit the builder check, then receive Spec Self-Review,\n'
+        + 'Adversarial Review, and Human Document Review. Full designs complete the builder\n'
+        + "check before that sequence. Honor the human's size override and assess completeness\n"
+        + 'at the agreed size; do not inflate a short design merely to satisfy review.',
+    ],
     [
       "may come back once with a few questions. Don't hand over the document\n"
         + 'until the check is back. Sort what the builder asks into three piles:',
@@ -40,20 +86,21 @@ const edits: Record<SupportedSkill, readonly (readonly [string, string])[]> = {
     [
       '<HARD-GATE>',
       '## Spec Self-Review\n\n'
-        + 'For a written project design, after resolving the builder check, review the\n'
-        + 'current document yourself for placeholders, contradictions, scope, and ambiguity.\n'
+        + 'For either design size, after its applicable builder check, review the current\n'
+        + 'document yourself for placeholders, contradictions, scope, and ambiguity.\n'
         + "Fix issues inline; preserve the human's decisions and label your own calls.\n"
         + 'Then complete Adversarial Review before handing over the document.\n\n'
         + '## Adversarial Review\n\n'
-        + 'For a written project design, load the native `superpowers-audit` skill after\n'
-        + 'spec self-review. Supply the written design, confirmed conversational intent/decisions and human answers\n'
-        + '(in a brief if available), and known drafting models; remain in this writer session.\n'
+        + 'For either design size, load the native `superpowers-audit` skill after spec\n'
+        + 'self-review. Supply the written design, agreed short/full size and completeness bar,\n'
+        + 'confirmed conversational intent/decisions and human answers (in a brief if available),\n'
+        + 'and known drafting models; remain in this writer session.\n'
         + 'Complete its discussion and report before human handoff.\n'
         + 'Present a non-approved result and ask for direction; preserve the actual result\n'
         + 'if the human proceeds. Audit questions about material decisions still go to the human;\n'
         + "the builder check's one question round does not waive that requirement.\n\n"
         + '## Human Document Review\n\n'
-        + 'For a written project design, hand over the current design and audit report,\n'
+        + 'For either design size, hand over the current design and audit report,\n'
         + 'state the actual outcome, and include a short list of calls you made so the human\n'
         + 'can check those while reading:\n\n'
         + '> "Spec: `<spec path>`. Audit: <actual outcome>; report: `<report path>`. My calls: <short list>. Please review the full document and report. Do you approve this design for planning?"\n\n'
@@ -63,10 +110,11 @@ const edits: Record<SupportedSkill, readonly (readonly [string, string])[]> = {
         + '<HARD-GATE>',
     ],
     [
-      "After a project's document is approved, the next step is the plan. For\n"
-        + 'software, invoke superpowers:writing-plans and no other skill.',
-      "After a project's builder check, self-review, audit, and human document approval,\n"
-        + 'the next step is the plan. For software, invoke superpowers:writing-plans and no other skill.',
+      'After the design doc is approved, the next step is the plan: invoke\n'
+        + 'superpowers:writing-plans and no other skill.',
+      'After either design size completes its applicable builder check, self-review,\n'
+        + 'audit, and human document approval, invoke superpowers:writing-plans and no other\n'
+        + 'skill. This handoff applies to software and non-software designs alike.',
     ],
   ],
   'writing-plans': [

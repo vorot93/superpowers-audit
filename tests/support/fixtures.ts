@@ -6,7 +6,7 @@ import { parseSkillFile, type SkillFile, type SupportedSkill } from '../../src/s
 export const skillIDs = ['brainstorming', 'writing-plans'] as const;
 
 export function fixture(id: SupportedSkill): string {
-  return readFileSync(new URL(`../fixtures/superpowers-7.0.0/${id}.md`, import.meta.url), 'utf8')
+  return readFileSync(new URL(`../fixtures/superpowers-7.0.1/${id}.md`, import.meta.url), 'utf8')
     .replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n?/, '').replaceAll('\r\n', '\n');
 }
 

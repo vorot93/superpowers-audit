@@ -2,14 +2,17 @@
 
 Independent review of specifications, implementation plans, and saved questions in
 OpenCode v2 and Claude Code. The plugin adds `/audit`, a shared audit skill, and automatic audit
-stages for Superpowers **7.0.0** brainstorming and writing-plans skills. In both
+stages for Superpowers **7.0.1** brainstorming and writing-plans skills. In both
 hosts, the auditor is OpenCode's `explore` agent on a model you choose.
 
 > Write → self-review → independent audit → human document review.
 
-For written designs, Superpowers' builder check comes before writer self-review.
-Quick tasks, small in-chat changes, question opt-outs, and throwaway spikes keep
-their upstream paths; automatic document auditing does not add gates to them.
+Short designs receive self-review, audit, and human approval without a builder
+check; full designs complete Superpowers' builder check first. If scope grows from
+short to full, the expanded design needs its builder check, renewed review and
+approval. Both approved sizes hand off to writing-plans, including non-software work.
+Quick tasks, question opt-outs, and authorized throwaway spikes keep their document
+exemptions; choices actually presented during active brainstorming still need review.
 
 The existing writer discusses findings with an auditor, verifies claims, applies
 justified corrections, and saves a Markdown report. Material design changes go to
@@ -118,7 +121,7 @@ direction. You may explicitly request that question anyway: it is shown with the
 actual review status, unresolved concerns and any save failure. That override is
 recorded separately; it neither claims auditor approval nor waives later questions.
 
-The shared skill's question triggers apply during brainstorming: presentations of
+The automatic Question Review stage loads the shared skill before brainstorming presentations of
 multiple explicit alternatives and every mandatory approaches discussion, including
 one viable approach with reasons others were rejected. Ordinary single suggestions
 and open questions are exempt. Loading the skill for a plan audit does not add
@@ -172,7 +175,7 @@ rather than silently activating defaults.
 
 ## Integration and limits
 
-In OpenCode, automatic integration recognizes the exact Superpowers 7.0.0 skill
+In OpenCode, automatic integration recognizes the exact Superpowers 7.0.1 skill
 bodies, not just a package version. Older versions are not adapted.
 Changed or customized definitions retain their content with an **Audit integration
 unavailable** notice; missing skills stay absent. Check plugin order and the status
@@ -184,7 +187,7 @@ spliced into it: when `superpowers:brainstorming` or `superpowers:writing-plans`
 loads through the Skill tool or is typed as a slash command, the plugin adds an
 amendment that names the upstream steps it supersedes. There is no body check, so
 the stages are added for any Superpowers version, but the amendments are written
-against Superpowers 7.0.0 and may misdescribe the steps of a later release.
+against Superpowers 7.0.1 and may misdescribe the steps of a later release.
 
 Claude Code re-attaches invoked skill bodies after compaction but not hook output,
 so on compaction the plugin adds a pointer telling the writer to reload the
@@ -207,7 +210,7 @@ report templates live in the [shared skill](skills/superpowers-audit/SKILL.md).
 - Older GitHub installation and native registration were verified on OpenCode
   **2.0.15**, before the Superpowers 7.0.0 adaptation. Earlier selected live audits
   do not establish acceptance of the current authoring bodies.
-- Current Superpowers 7.0.0 integration is registry-verified on OpenCode **2.1.2**
+- Historical Superpowers 7.0.0 integration was registry-verified on OpenCode **2.1.2**
   using a production-only local tarball: complete adapted skill bodies and exact
   upstream paths, the shared skill with its OpenCode dispatch reference naming
   `explore`, and three skill/command reloads. This check uses no model.
@@ -225,7 +228,7 @@ report templates live in the [shared skill](skills/superpowers-audit/SKILL.md).
 **Live verification limit:** not exercised live are compaction recovery; a round
 expiring (exit 124 or 142) under the shipped reference, though expiry, session
 export, and resend were exercised manually during development; complete automatic
-Superpowers 7.0.0 spec and plan authoring, audit, and handoff in either host; and
+Superpowers 7.0.1 spec and plan authoring, audit, and handoff in either host; and
 renewed audits after actual direct human edits or changes they request. Unit/package
 tests, registry checks, and interpretation scenarios do not close that gap.
 
@@ -253,4 +256,4 @@ See [AGENTS.md](AGENTS.md) for maintenance and verification conventions and
 
 This project is licensed under [Apache-2.0](LICENSE). Superpowers instruction
 excerpts and fixtures are derived from Jesse Vincent's MIT-licensed Superpowers.
-See [NOTICE](NOTICE) and the [fixture attribution](tests/fixtures/superpowers-7.0.0/README.md).
+See [NOTICE](NOTICE) and the [fixture attribution](tests/fixtures/superpowers-7.0.1/README.md).

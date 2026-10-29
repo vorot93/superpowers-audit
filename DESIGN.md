@@ -90,19 +90,24 @@ host-specific; the shared contract is the block shape and the named key.
 
 ## Adapt only known skill bodies
 
-Superpowers adaptations are in-memory registry transforms. They insert audit
+Superpowers adaptations are in-memory registry transforms. They insert question
+review before brainstorming choice/approach presentations and document audit
 loading after self-review and before human handoff, including scripted handoffs
 and renewed review after human edits. Registration order matters: the source
 skills must already be visible, and a later plugin can replace them.
 
-The supported baseline is Superpowers 7.0.0. The plugin supplies brainstorming's
+The supported baseline is Superpowers 7.0.1. The plugin supplies brainstorming's
 writer self-review; writing-plans retains upstream self-review. Brainstorming's
-builder check remains a separate upstream stage: resolve it, self-review the written
-design, then audit before human approval. The builder check's one question round does
-not limit material decision questions from an audit. Only written designs get
-these document stages; upstream quick-task, opt-out, small-change, and spike
-routes stay unchanged. After handoff, direct human edits or changes they request
-require renewed self-review and a fresh audit.
+builder check remains a separate stage for full designs. Short designs omit it,
+then receive self-review, audit and human approval at their agreed completeness bar.
+Growth to full scope requires the builder check and fresh review/approval of the
+expanded design; prior short-design approval cannot carry over. Both sizes then
+hand off to writing-plans, including non-software work. The builder check's one
+question round does not limit material decisions from an audit. Quick-task, opt-out
+and authorized-spike routes keep their document exemptions, while actual comparison
+presentations during active brainstorming still trigger question review. After
+handoff, direct human edits or requested changes require renewed self-review and a
+fresh audit.
 
 Whole-body input and output hashes are deliberate compatibility boundaries.
 Matching isolated headings or fragments could silently drop upstream requirements.
@@ -119,7 +124,7 @@ body when either skill loads or is typed. Nothing is spliced, so an upstream cha
 cannot be silently corrupted; at worst the amendment's "supersedes" statements no
 longer match the steps they name. The hook sees only the qualified skill name, never
 the body or its path, so a check would cost an extra writer step on every load. The
-risk is accepted: the amendments are written against Superpowers 7.0.0 and must be
+risk is accepted: the amendments are written against Superpowers 7.0.1 and must be
 reviewed on each Superpowers release. Each amendment is framed as this plugin's
 workflow amendment to the just-loaded skill, because Claude Code ignores added
 context that reads like an injection, and it points to the shared skill for every

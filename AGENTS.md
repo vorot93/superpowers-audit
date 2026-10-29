@@ -71,9 +71,13 @@ optional and must resolve to that external directory if used.
 - Update diagrams and scripted handoffs alongside surrounding prose. After handoff,
   direct human edits or changes they request require renewed self-review and a
   fresh audit in both authoring skills.
-- Preserve the upstream skill path when adapting content. Superpowers 7.0.0's
+- Preserve the upstream skill path when adapting content. Superpowers 7.0.1's
   builder check resolves `builder-check-prompt.md` relative to that directory;
   it remains a separate stage before writer self-review and the audit.
+- When updating authoring stages, keep the stage-only control on the current
+  shared workflow: otherwise a question-target failure can hide a stage-loading
+  gap. Check short-design builder omission alongside review insertion, and remove
+  obsolete operative handoffs rather than merely adding contradictory prose.
 - Check replay and disposal as well as initial registration. Native `editor.add`
   replaces an existing skill ID, including across transforms; the registry double
   models ordered replay and host-owned disposal, not auditor execution.
