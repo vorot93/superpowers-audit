@@ -1,12 +1,12 @@
 {
   "name": "superpowers-audit",
   "version": "0.1.0",
-  "description": "Writer-led external audit of Superpowers specifications and implementation plans.",
+  "description": "Writer-led independent audits of specifications, implementation plans, and brainstorming questions.",
   "author": { "name": "Artem Vorotnikov" },
   "homepage": "https://github.com/vorot93/superpowers-audit",
   "repository": "https://github.com/vorot93/superpowers-audit",
   "license": "Apache-2.0",
-  "keywords": ["superpowers", "audit", "review", "specification", "plan"],
+  "keywords": ["superpowers", "audit", "review", "specification", "plan", "question", "brainstorming"],
   "userConfig": {
     "reviewers": {
       "type": "string",
@@ -19,7 +19,7 @@
       "min": 1,
       "default": 5,
       "title": "Maximum audit rounds",
-      "description": "Positive integer limiting the audit rounds per document."
+      "description": "Positive integer limiting the audit rounds per target."
     },
     "artifactDirectory": {
       "type": "string",

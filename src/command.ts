@@ -8,7 +8,7 @@ export const COMMAND_SUFFIX = `\n\nLoad the native ${AUDIT_SKILL_ID} skill and f
 export function createAuditCommand(session: Pick<Plugin.Context['session'], 'prompt'>): CommandDefinition {
   return {
     name: 'audit',
-    description: 'Discuss and correct a spec or plan with an independent auditor',
+    description: 'Discuss and correct a spec, plan, or question with an independent auditor',
     async execute({ sessionID, prompt, delivery }) {
       // Appending keeps the native attachment mention offsets in the original text.
       await session.prompt({ ...prompt, sessionID, delivery, text: prompt.text + COMMAND_SUFFIX });

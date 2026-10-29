@@ -1,7 +1,7 @@
 # Superpowers Audit
 
-Independent review of specifications and implementation plans in OpenCode v2 and
-Claude Code. The plugin adds `/audit`, a shared audit skill, and automatic audit
+Independent review of specifications, implementation plans, and saved questions in
+OpenCode v2 and Claude Code. The plugin adds `/audit`, a shared audit skill, and automatic audit
 stages for Superpowers **7.0.0** brainstorming and writing-plans skills. In both
 hosts, the auditor is OpenCode's `explore` agent on a model you choose.
 
@@ -57,7 +57,7 @@ Configure reviewers, the round limit, and the artifact directory with
 `/plugin configure` (list options are not `/config` rows). Each `reviewers` entry
 is `writer-provider/model=reviewer-provider/model[#variant]`; the other options
 match the [Configuration](#configuration) table. Run
-`/audit path/to/spec-or-plan.md` as described under [Usage](#usage).
+`/audit path/to/spec-plan-or-question.md` as described under [Usage](#usage).
 
 #### Claude Code prerequisites
 
@@ -87,7 +87,7 @@ match the [Configuration](#configuration) table. Run
 
 ## Usage
 
-Run `/audit path/to/spec-or-plan.md` in the writer's session after self-review.
+Run `/audit path/to/spec-plan-or-question.md` in the writer's session after self-review.
 Provide confirmed intent, governing decisions and human answers, and known drafting
 models; a brief file is optional. A plan also needs its approved specification.
 Missing inputs or an ambiguous path prompt clarification.
@@ -99,6 +99,32 @@ model, with a default limit of five calls. The writer reports the actual outcome
 links the reviewed document and saved report, and asks for the human's decision.
 After handoff, direct human edits or changes they request receive self-review and
 a fresh audit.
+
+### Question targets
+
+A manual `/audit` can review a saved question outside brainstorming too. Save the
+complete proposed presentation: question/header, ordered choices and descriptions,
+surrounding explanation, trade-offs, recommendation, previews, selection behavior,
+and relevant goals, prior answers, sources and drafting contributors. The shared
+workflow stores question evidence in `questions/` and a distinct report in `audits/`.
+Each question has its own fresh independent auditor and round budget, including
+questions in a native batch.
+
+Present the reviewed version only after approval and a saved report. Changed
+authored fields, selection behavior or context invalidate presentation approval;
+changes after a completed audit require a fresh review. If review cannot finish or
+the report cannot be saved, the writer withholds choices and asks openly for
+direction. You may explicitly request that question anyway: it is shown with the
+actual review status, unresolved concerns and any save failure. That override is
+recorded separately; it neither claims auditor approval nor waives later questions.
+
+The shared skill's question triggers apply during brainstorming: presentations of
+multiple explicit alternatives and every mandatory approaches discussion, including
+one viable approach with reasons others were rejected. Ordinary single suggestions
+and open questions are exempt. Loading the skill for a plan audit does not add
+review to its execution-method menu. A question audit may run while a document
+audit is paused, with serialized calls and distinct sessions/counts; the writer
+resumes the document audit after obtaining your actual answer.
 
 The auditor must differ in **both provider and model family/class** from every
 known drafting contributor and the current writer. Variants, aliases, or gateways
@@ -138,7 +164,7 @@ placeholders; replace them with explicit choices from your OpenCode model catalo
 | Option | Default | Meaning |
 | --- | --- | --- |
 | `reviewers` | `{}` | User-selected reviewer candidates keyed by drafting `provider/model`, without its variant. Values accept an optional `#variant`; model IDs may contain `/`, but entries cannot contain commas or `=`. Candidates must still satisfy independence and availability checks. |
-| `maxRounds` | `5` | Positive integer counting the initial auditor call and every explicit follow-up, including clarifications. Native retries and reading existing replies do not add rounds. |
+| `maxRounds` | `5` | Positive integer per target counting the initial auditor call and every explicit follow-up, including clarifications. Native retries and reading existing replies do not add rounds. |
 | `artifactDirectory` | Project convention | Nonempty path for audit artifacts. Relative paths resolve from the writer's project root; reports go in `audits/` beneath it. When omitted, the writer uses the project's `.superpowers` link or stated convention, asking when unclear. |
 
 Invalid or unknown options produce a visible correction request before dispatch

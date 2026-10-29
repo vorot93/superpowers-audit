@@ -107,3 +107,14 @@ state any input it could not examine, so weigh that statement in the reply.
 Auto-rejection blocks only that tool call, not the auditor: its shell can still
 read the same file, so keeping credentials out of review rests on the assignment's
 instruction alone.
+
+### Question presentation
+
+Claude Code's native question tool is `AskUserQuestion`, with a `questions` array.
+Consult the active tool schema/instructions for question text, headers, ordered
+option labels/descriptions, multi-selection behavior, and any authored previews or
+additional fields. Establish the actual host's free-text/other-answer mechanisms;
+an SDK example does not establish the CLI renderer's behavior. Include all authored
+fields and answer mechanisms in review context. Every question in a batch has its
+own target, auditor, budget and report. Prose choices receive the same complete
+presentation review, including surrounding explanation and recommendation.

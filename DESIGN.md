@@ -33,6 +33,25 @@ workflow, outcome rules, and auditor/report templates. Both `/audit` and the
 adapted authoring skills load it. Keeping the conversation rules in one place
 prevents manual and automatic audits from diverging.
 
+Specifications, plans and questions share one selection, independence, conversation,
+budget and outcome workflow, with target-specific required inputs and handoffs.
+Question approval permits presenting a decision, not answering it or approving its
+design. Reports retain the exact presentation snapshot and review coverage, because
+a mutable working target alone cannot establish which version was reviewed.
+
+Every question owns a fresh audit and budget, even within a native batch. A question
+needed by a document audit may be reviewed while that audit is explicitly paused;
+calls are serialized and both continuation identities remain separate. This is
+writer-owned conversation context, not persistent plugin workflow state.
+
+Question publication requires approval, a saved report and an unchanged outgoing
+presentation. Explicit human per-question overrides are separate records with actual
+review coverage and any publication failure; they do not manufacture auditor
+approval or authorize later questions. An unchanged report-save retry adds no round
+and changes no outcome. Scope is active brainstorming, including reentry; manual
+requests can identify questions outside it, while planning's execution menu stays
+outside the automatic trigger.
+
 The shared body is host-neutral: it names no OpenCode tool, agent, or context
 block. Each host appends its own dispatch reference
 ([`references/opencode.md`](skills/superpowers-audit/references/opencode.md) for

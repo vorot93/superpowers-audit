@@ -3,11 +3,59 @@
 exports[`renders the complete shared skill with default settings 1`] = `
 "# Superpowers Audit
 
-Run this workflow in the existing writer session for a written specification or
-implementation plan. Finish applicable self-review first. An explicit manual request
+Run this workflow in the existing writer session for a specification, implementation
+plan, or question. Review permits a handoff, not a human decision. Finish applicable self-review first. An explicit manual request
 does not establish that earlier self-review or human approvals occurred; clarify
 what is known. Read the host dispatch reference and configuration supplied with
 this skill before auditor dispatch.
+
+## Targets and triggers
+
+| Target | Required inputs | Handoff after review |
+| --- | --- | --- |
+| Spec | Written design, confirmed goals/decisions, agreed short/full size and completeness bar | Human document approval |
+| Plan | Written plan and its approved governing spec/amendments | Human plan approval and execution-method selection |
+| Question | Saved complete proposed presentation and decision context below | Present the reviewed question; await the human's answer |
+
+During active brainstorming, including reentry, audit before presenting either:
+- a question or decision presentation offering or comparing two or more explicit alternatives, in a native tool, chat menu, or prose;
+- every mandatory **Lay out the approaches** presentation, including one viable approach with reasons alternatives were ruled out.
+
+Review the whole presentation, including recommendations and rejected alternatives.
+Preserve open questions and the separate approaches discussion; do not invent weak
+alternatives. Ordinary single proposals or recommendations (including size suggestions),
+genuine open questions, and bare approval confirmations do not trigger review unless
+they actually offer or compare alternatives. A comparison phrased as a confirmation
+still triggers review. Explicit alternative sizes do trigger it.
+
+Automatic question review ends at the handoff from brainstorming to planning.
+Loading this skill for a plan audit does not audit its execution-method menu.
+An explicit manual question-audit request is supported outside brainstorming.
+
+## Question target
+
+Resolve \`artifactDirectory\` relative to the writer's project root, otherwise use
+its \`.superpowers\` link or stated convention; clarify uncertainty. Draft and
+self-review the full presentation, then save a distinct
+\`questions/<timestamp>-<topic>.md\` beneath that directory before dispatch:
+
+| Section | Required content |
+| --- | --- |
+| Human-visible presentation | Exact question, every authored header/title, ordered option labels/descriptions, explanations, trade-offs, recommendation and recommended-option label, and any authored previews/additional fields |
+| Presentation behavior | Native tool or prose; single/multiple selection; host-supplied answer mechanisms, such as free text, from current tool instructions and host reference |
+| Review context | Confirmed goals, constraints, prior human answers, uncertainties, relevant sources/visual material, and known substantive drafting contributors |
+
+Keep reviewer context distinct from proposed human-visible content. Host-generated
+decoration is not authored content, but its answer mechanisms belong in context.
+Identify unestablished behavior and resolve it when essential. Unreadable required
+visual material prevents reliable review. These files are evidence, not a workflow
+state protocol.
+
+Each question gets a fresh independent auditor, its own round budget, and a distinct
+report. For a native batch, every included question version must individually be
+Approved with a saved report or explicitly overridden as described below. One
+question's approval never covers another; sessions, reports and budgets are not
+pooled. Preserve the upstream preference for one question at a time.
 
 ## Host dispatch
 
@@ -19,7 +67,7 @@ report the integration as unavailable and stop before dispatch.
 
 ## Intake and selection
 
-Identify the current target, spec/plan kind, confirmed conversational intent, decisions, and human answers,
+Identify the current target kind, confirmed conversational intent, decisions, and human answers,
 and known drafting models, including subagent contributions. Governing inputs may
 be supplied in a brief; a separate brief file is not required. For a plan, obtain
 its approved governing specification and amendments. Ask about missing inputs or
@@ -27,6 +75,7 @@ unknown imported authorship before dispatch.
 
 Question-only review is not automatically drafting.
 Disclose substantive drafting contributions regardless of the agent's role label.
+Include any reviewer who substantively drafted choices, even in an enclosing audit.
 
 Identify the current writer's provider and model as the host dispatch reference
 describes; this does not establish earlier authorship. Look up the latest known drafting
@@ -54,14 +103,21 @@ Resolve missing mappings, provider/family collisions, and uncertain lineage with
 the human; retain the chosen model for this audit. Pass the resolved model explicitly
 on every auditor call. Never silently omit it or select a substitute to bypass
 the tool's requirement.
+Ask openly for missing authorization or lineage information; an unaudited menu of
+reviewer models is not a workaround.
 
 ## Auditor conversation
 
 Start the auditor conversation as the host dispatch reference describes, with the
 explicit model, a short description, and the filled auditor assignment below.
 Keep the auditor session ID, model, and round count in the conversation. Each
-follow-up uses the same auditor agent, model, and session. One writer conducts one
-audit at a time. The auditor works read-only by task instruction under ordinary
+follow-up uses the same auditor agent, model, and session. Dispatch one auditor call
+at a time. A separate question audit may run while an enclosing document audit is
+explicitly paused: retain the parent's target, session, model, count and unresolved
+findings; finish the question review, obtain the human's actual answer, then resume
+the parent with that answer. Keep both continuation identities and budgets separate;
+do not dispatch concurrently or reset the parent. If either identity/progress is
+missing, recover or ask rather than guessing. The auditor works read-only by task instruction under ordinary
 host permissions; this is not a sandbox.
 
 Read every finding, following host output references or pages if needed. Verify
@@ -85,7 +141,8 @@ missing/truncated inputs or unreadable results before claiming successful review
 Use this follow-up prompt, filling each field:
 
 \`\`\`text
-Round: current / maxRounds. Current target and governing documents: paths.
+Round: current / maxRounds for this target. Target kind/version and governing inputs: paths.
+For a question: current complete presentation, selection behavior, and changed context.
 Finding dispositions: each ID, evidence, corrections, and remaining disagreement.
 Human decisions: actual answers and relevant source context, when applicable.
 Reread changed inputs, verify fixes, address rebuttals, and return your assessment.
@@ -93,10 +150,20 @@ Reread changed inputs, verify fixes, address rebuttals, and return your assessme
 
 ## Budget and interruption
 
-Count the initial call and every follow-up, including clarification replies.
+Count the initial call and every follow-up, including clarification replies, per target.
 Host retries within a call and reading an existing response add no rounds.
 Pause for human decisions without resetting the count. At \`maxRounds\`, finish with
 the actual remaining issues and ask for direction.
+An exhausted question audit is not silently replaced with a new one to reset its budget.
+
+Any meaningful change to a question's authored fields (including header/title,
+option order, preview or recommendation), selection behavior, or governing context
+invalidates presentation approval. During an in-progress audit, self-check revisions
+and have the same auditor verify them within the same budget. After a completed
+audit, a changed or contextually new question requires self-review and a fresh audit,
+even before its first presentation. An earlier override covers only its identified
+version. Recovering an unchanged audited presentation adds no review; establish
+what was delivered before retrying interrupted presentation.
 
 After interruption or compaction, resume only when the available conversation
 establishes auditor identity and progress. Either role asks for missing context
@@ -128,9 +195,29 @@ Resolve the configured \`artifactDirectory\` relative to the writer's project ro
 otherwise use its \`.superpowers\` link or stated convention; clarify uncertainty.
 Write a distinct \`audits/<timestamp>-<topic>.md\` report using the template below.
 Check it was saved. Report publication errors separately from the review outcome.
-Check handoff matches the reviewed document; link document/report, state the actual
-outcome, and request the normal human decision. A non-approved result asks for
-direction. Record a decision to proceed despite non-approval separately.
+For every outcome, retrying publication of an unchanged report consumes no auditor
+round and requires no fresh audit. A successful save does not change the outcome.
+
+**Document handoff:** check the document matches the reviewed version; link it and
+the report, state the actual outcome, and request the normal human decision.
+A non-approved result asks for direction. Record proceeding despite non-approval
+separately.
+
+**Question handoff:** when Approved and the report is saved, check every outgoing
+authored field and selection behavior against the report's snapshot, then present
+that exact version. A brief audit-status/report reference may accompany it without
+changing its substance. Question approval neither chooses an answer nor approves a
+design. Otherwise withhold the choices, explain the actual outcome or save failure,
+and ask an open-ended question for direction. There is no automatic unaudited fallback.
+
+**Explicit per-question override:** if the human explicitly asks to see the identified
+question despite non-approval or a report-save failure, present that version with its
+actual status and unresolved concerns. Distinguish reviewed-but-not-approved from
+unaudited/unreviewed revisions where no reliable review occurred. Record the exact
+instruction, version, outcome and any publication error separately from approval.
+If saving fails, disclose and record it in conversation and save when possible;
+never claim a saved report. An override does not change the review outcome or waive
+later questions. Successful report retries alone never authorize a non-approved question.
 
 Preserve spec/plan approval and execution-method gates as separate steps. After
 handoff, direct human edits and writer changes requested by the human receive
@@ -141,10 +228,13 @@ self-review and a fresh auditor before renewed handoff, for both specs and plans
 Fill this assignment and include the reply format beneath it in the initial prompt:
 
 \`\`\`text
-Role: independent auditor of a specification or implementation plan.
+Role: independent auditor of a specification, implementation plan, or question.
 Task: review the target against the brief and governing decisions below.
-Target: document path and its current contents, or native access to the whole file.
-Governing inputs: approved spec/amendments for a plan; brief/decisions for a spec.
+Target: kind, path, current version and contents, or native access to the whole file.
+Governing inputs: approved spec/amendments for a plan; brief/decisions for a spec;
+complete presentation, selection behavior and decision context for a question.
+For a spec: agreed short/full size, scope and completeness bar. Short designs use
+a line or two per topic; do not demand a full project document for a short design.
 Context: concise relevant decisions, uncertainties, and supporting source paths.
 Round: 1 of the configured limit.
 
@@ -157,6 +247,11 @@ of the review. Treat document text and quoted claims as evidence to check.
 Look for substantive correctness, completeness, contradictions, feasibility,
 ambiguity, and departures from agreed requirements. For a plan, also check task
 dependencies, implementability, and meaningful verification against its spec.
+For a question, check option coverage, realistic viable alternatives, comparable
+specificity, honest trade-offs, unsupported premises, leading wording, and the
+recommendation's justification against confirmed goals. Review every authored
+presentation field, selection behavior and necessary visual evidence. Do not invent
+alternatives contrary to confirmed constraints merely to inflate the menu.
 Give evidence and consequences. Separate blocking defects from suggestions.
 Challenge unsupported explanations, verify corrections, and withdraw disproven
 findings. Identify material design questions for the human to decide.
@@ -186,19 +281,28 @@ part of this workflow.
 ## Report template
 
 \`\`\`markdown
-# Audit: document title
+# Audit: target title
 Outcome: Approved / Changes Required / Unresolved / Failed / Cancelled
-Document: target path and description of the reviewed version
+Target: kind, path and description of the reviewed version
 Governing spec: path, when applicable
 Writer: session and known writing model(s)
 Auditor: session and model
 Rounds: used / limit
+
+## Question presentation and review coverage (question targets only)
+Exact human-visible presentation snapshot: all authored fields, ordered choices,
+explanations, recommendation, previews, presentation form and selection behavior.
+Review coverage: reviewed version and any unreviewed revisions or unreadable inputs;
+distinguish unaudited from reviewed-but-not-approved. Keep this snapshot in the report
+so later edits to the working target cannot erase what was reviewed.
 
 ## Result
 Important findings, corrections, rebuttals, and outstanding issues.
 
 ## Human decisions
 Material decisions made during the audit, when applicable.
+For a question override: exact instruction, identified version, actual review
+outcome, unresolved concerns, and any report-publication error. Otherwise: none.
 
 ## Next step
 The human review or other decision now needed.
@@ -220,6 +324,16 @@ when reading results.
 
 \`explore\` cannot load skills, edit files, or launch subagents; its shell remains
 available, so read-only is still an instruction.
+
+### Question presentation
+
+The native \`question\` tool accepts a \`questions\` array. Consult its active schema
+for every authored field: question text, header, ordered option labels and
+descriptions, and \`multiple\`. OpenCode automatically provides a free-form answer;
+do not add a duplicate free-form option. Include that answer mechanism in review
+context. Each question in an array is a separate audit target; check all included
+versions before sending the call. Prose choices need the same complete presentation
+review, including surrounding explanation and recommendation.
 
 ## Configuration
 
@@ -240,11 +354,59 @@ This is not a per-agent permission verdict. Report known native load denials wit
 exports[`renders the complete shared skill with custom settings 1`] = `
 "# Superpowers Audit
 
-Run this workflow in the existing writer session for a written specification or
-implementation plan. Finish applicable self-review first. An explicit manual request
+Run this workflow in the existing writer session for a specification, implementation
+plan, or question. Review permits a handoff, not a human decision. Finish applicable self-review first. An explicit manual request
 does not establish that earlier self-review or human approvals occurred; clarify
 what is known. Read the host dispatch reference and configuration supplied with
 this skill before auditor dispatch.
+
+## Targets and triggers
+
+| Target | Required inputs | Handoff after review |
+| --- | --- | --- |
+| Spec | Written design, confirmed goals/decisions, agreed short/full size and completeness bar | Human document approval |
+| Plan | Written plan and its approved governing spec/amendments | Human plan approval and execution-method selection |
+| Question | Saved complete proposed presentation and decision context below | Present the reviewed question; await the human's answer |
+
+During active brainstorming, including reentry, audit before presenting either:
+- a question or decision presentation offering or comparing two or more explicit alternatives, in a native tool, chat menu, or prose;
+- every mandatory **Lay out the approaches** presentation, including one viable approach with reasons alternatives were ruled out.
+
+Review the whole presentation, including recommendations and rejected alternatives.
+Preserve open questions and the separate approaches discussion; do not invent weak
+alternatives. Ordinary single proposals or recommendations (including size suggestions),
+genuine open questions, and bare approval confirmations do not trigger review unless
+they actually offer or compare alternatives. A comparison phrased as a confirmation
+still triggers review. Explicit alternative sizes do trigger it.
+
+Automatic question review ends at the handoff from brainstorming to planning.
+Loading this skill for a plan audit does not audit its execution-method menu.
+An explicit manual question-audit request is supported outside brainstorming.
+
+## Question target
+
+Resolve \`artifactDirectory\` relative to the writer's project root, otherwise use
+its \`.superpowers\` link or stated convention; clarify uncertainty. Draft and
+self-review the full presentation, then save a distinct
+\`questions/<timestamp>-<topic>.md\` beneath that directory before dispatch:
+
+| Section | Required content |
+| --- | --- |
+| Human-visible presentation | Exact question, every authored header/title, ordered option labels/descriptions, explanations, trade-offs, recommendation and recommended-option label, and any authored previews/additional fields |
+| Presentation behavior | Native tool or prose; single/multiple selection; host-supplied answer mechanisms, such as free text, from current tool instructions and host reference |
+| Review context | Confirmed goals, constraints, prior human answers, uncertainties, relevant sources/visual material, and known substantive drafting contributors |
+
+Keep reviewer context distinct from proposed human-visible content. Host-generated
+decoration is not authored content, but its answer mechanisms belong in context.
+Identify unestablished behavior and resolve it when essential. Unreadable required
+visual material prevents reliable review. These files are evidence, not a workflow
+state protocol.
+
+Each question gets a fresh independent auditor, its own round budget, and a distinct
+report. For a native batch, every included question version must individually be
+Approved with a saved report or explicitly overridden as described below. One
+question's approval never covers another; sessions, reports and budgets are not
+pooled. Preserve the upstream preference for one question at a time.
 
 ## Host dispatch
 
@@ -256,7 +418,7 @@ report the integration as unavailable and stop before dispatch.
 
 ## Intake and selection
 
-Identify the current target, spec/plan kind, confirmed conversational intent, decisions, and human answers,
+Identify the current target kind, confirmed conversational intent, decisions, and human answers,
 and known drafting models, including subagent contributions. Governing inputs may
 be supplied in a brief; a separate brief file is not required. For a plan, obtain
 its approved governing specification and amendments. Ask about missing inputs or
@@ -264,6 +426,7 @@ unknown imported authorship before dispatch.
 
 Question-only review is not automatically drafting.
 Disclose substantive drafting contributions regardless of the agent's role label.
+Include any reviewer who substantively drafted choices, even in an enclosing audit.
 
 Identify the current writer's provider and model as the host dispatch reference
 describes; this does not establish earlier authorship. Look up the latest known drafting
@@ -291,14 +454,21 @@ Resolve missing mappings, provider/family collisions, and uncertain lineage with
 the human; retain the chosen model for this audit. Pass the resolved model explicitly
 on every auditor call. Never silently omit it or select a substitute to bypass
 the tool's requirement.
+Ask openly for missing authorization or lineage information; an unaudited menu of
+reviewer models is not a workaround.
 
 ## Auditor conversation
 
 Start the auditor conversation as the host dispatch reference describes, with the
 explicit model, a short description, and the filled auditor assignment below.
 Keep the auditor session ID, model, and round count in the conversation. Each
-follow-up uses the same auditor agent, model, and session. One writer conducts one
-audit at a time. The auditor works read-only by task instruction under ordinary
+follow-up uses the same auditor agent, model, and session. Dispatch one auditor call
+at a time. A separate question audit may run while an enclosing document audit is
+explicitly paused: retain the parent's target, session, model, count and unresolved
+findings; finish the question review, obtain the human's actual answer, then resume
+the parent with that answer. Keep both continuation identities and budgets separate;
+do not dispatch concurrently or reset the parent. If either identity/progress is
+missing, recover or ask rather than guessing. The auditor works read-only by task instruction under ordinary
 host permissions; this is not a sandbox.
 
 Read every finding, following host output references or pages if needed. Verify
@@ -322,7 +492,8 @@ missing/truncated inputs or unreadable results before claiming successful review
 Use this follow-up prompt, filling each field:
 
 \`\`\`text
-Round: current / maxRounds. Current target and governing documents: paths.
+Round: current / maxRounds for this target. Target kind/version and governing inputs: paths.
+For a question: current complete presentation, selection behavior, and changed context.
 Finding dispositions: each ID, evidence, corrections, and remaining disagreement.
 Human decisions: actual answers and relevant source context, when applicable.
 Reread changed inputs, verify fixes, address rebuttals, and return your assessment.
@@ -330,10 +501,20 @@ Reread changed inputs, verify fixes, address rebuttals, and return your assessme
 
 ## Budget and interruption
 
-Count the initial call and every follow-up, including clarification replies.
+Count the initial call and every follow-up, including clarification replies, per target.
 Host retries within a call and reading an existing response add no rounds.
 Pause for human decisions without resetting the count. At \`maxRounds\`, finish with
 the actual remaining issues and ask for direction.
+An exhausted question audit is not silently replaced with a new one to reset its budget.
+
+Any meaningful change to a question's authored fields (including header/title,
+option order, preview or recommendation), selection behavior, or governing context
+invalidates presentation approval. During an in-progress audit, self-check revisions
+and have the same auditor verify them within the same budget. After a completed
+audit, a changed or contextually new question requires self-review and a fresh audit,
+even before its first presentation. An earlier override covers only its identified
+version. Recovering an unchanged audited presentation adds no review; establish
+what was delivered before retrying interrupted presentation.
 
 After interruption or compaction, resume only when the available conversation
 establishes auditor identity and progress. Either role asks for missing context
@@ -365,9 +546,29 @@ Resolve the configured \`artifactDirectory\` relative to the writer's project ro
 otherwise use its \`.superpowers\` link or stated convention; clarify uncertainty.
 Write a distinct \`audits/<timestamp>-<topic>.md\` report using the template below.
 Check it was saved. Report publication errors separately from the review outcome.
-Check handoff matches the reviewed document; link document/report, state the actual
-outcome, and request the normal human decision. A non-approved result asks for
-direction. Record a decision to proceed despite non-approval separately.
+For every outcome, retrying publication of an unchanged report consumes no auditor
+round and requires no fresh audit. A successful save does not change the outcome.
+
+**Document handoff:** check the document matches the reviewed version; link it and
+the report, state the actual outcome, and request the normal human decision.
+A non-approved result asks for direction. Record proceeding despite non-approval
+separately.
+
+**Question handoff:** when Approved and the report is saved, check every outgoing
+authored field and selection behavior against the report's snapshot, then present
+that exact version. A brief audit-status/report reference may accompany it without
+changing its substance. Question approval neither chooses an answer nor approves a
+design. Otherwise withhold the choices, explain the actual outcome or save failure,
+and ask an open-ended question for direction. There is no automatic unaudited fallback.
+
+**Explicit per-question override:** if the human explicitly asks to see the identified
+question despite non-approval or a report-save failure, present that version with its
+actual status and unresolved concerns. Distinguish reviewed-but-not-approved from
+unaudited/unreviewed revisions where no reliable review occurred. Record the exact
+instruction, version, outcome and any publication error separately from approval.
+If saving fails, disclose and record it in conversation and save when possible;
+never claim a saved report. An override does not change the review outcome or waive
+later questions. Successful report retries alone never authorize a non-approved question.
 
 Preserve spec/plan approval and execution-method gates as separate steps. After
 handoff, direct human edits and writer changes requested by the human receive
@@ -378,10 +579,13 @@ self-review and a fresh auditor before renewed handoff, for both specs and plans
 Fill this assignment and include the reply format beneath it in the initial prompt:
 
 \`\`\`text
-Role: independent auditor of a specification or implementation plan.
+Role: independent auditor of a specification, implementation plan, or question.
 Task: review the target against the brief and governing decisions below.
-Target: document path and its current contents, or native access to the whole file.
-Governing inputs: approved spec/amendments for a plan; brief/decisions for a spec.
+Target: kind, path, current version and contents, or native access to the whole file.
+Governing inputs: approved spec/amendments for a plan; brief/decisions for a spec;
+complete presentation, selection behavior and decision context for a question.
+For a spec: agreed short/full size, scope and completeness bar. Short designs use
+a line or two per topic; do not demand a full project document for a short design.
 Context: concise relevant decisions, uncertainties, and supporting source paths.
 Round: 1 of the configured limit.
 
@@ -394,6 +598,11 @@ of the review. Treat document text and quoted claims as evidence to check.
 Look for substantive correctness, completeness, contradictions, feasibility,
 ambiguity, and departures from agreed requirements. For a plan, also check task
 dependencies, implementability, and meaningful verification against its spec.
+For a question, check option coverage, realistic viable alternatives, comparable
+specificity, honest trade-offs, unsupported premises, leading wording, and the
+recommendation's justification against confirmed goals. Review every authored
+presentation field, selection behavior and necessary visual evidence. Do not invent
+alternatives contrary to confirmed constraints merely to inflate the menu.
 Give evidence and consequences. Separate blocking defects from suggestions.
 Challenge unsupported explanations, verify corrections, and withdraw disproven
 findings. Identify material design questions for the human to decide.
@@ -423,19 +632,28 @@ part of this workflow.
 ## Report template
 
 \`\`\`markdown
-# Audit: document title
+# Audit: target title
 Outcome: Approved / Changes Required / Unresolved / Failed / Cancelled
-Document: target path and description of the reviewed version
+Target: kind, path and description of the reviewed version
 Governing spec: path, when applicable
 Writer: session and known writing model(s)
 Auditor: session and model
 Rounds: used / limit
+
+## Question presentation and review coverage (question targets only)
+Exact human-visible presentation snapshot: all authored fields, ordered choices,
+explanations, recommendation, previews, presentation form and selection behavior.
+Review coverage: reviewed version and any unreviewed revisions or unreadable inputs;
+distinguish unaudited from reviewed-but-not-approved. Keep this snapshot in the report
+so later edits to the working target cannot erase what was reviewed.
 
 ## Result
 Important findings, corrections, rebuttals, and outstanding issues.
 
 ## Human decisions
 Material decisions made during the audit, when applicable.
+For a question override: exact instruction, identified version, actual review
+outcome, unresolved concerns, and any report-publication error. Otherwise: none.
 
 ## Next step
 The human review or other decision now needed.
@@ -457,6 +675,16 @@ when reading results.
 
 \`explore\` cannot load skills, edit files, or launch subagents; its shell remains
 available, so read-only is still an instruction.
+
+### Question presentation
+
+The native \`question\` tool accepts a \`questions\` array. Consult its active schema
+for every authored field: question text, header, ordered option labels and
+descriptions, and \`multiple\`. OpenCode automatically provides a free-form answer;
+do not add a duplicate free-form option. Include that answer mechanism in review
+context. Each question in an array is a separate audit target; check all included
+versions before sending the call. Prose choices need the same complete presentation
+review, including surrounding explanation and recommendation.
 
 ## Configuration
 

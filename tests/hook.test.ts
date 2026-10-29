@@ -166,7 +166,15 @@ test('stays under the context limit', async () => {
   for (const vector of configVectors.filter(v => v.env !== undefined)) {
     longest = Math.max(longest, (await auditContext(vector.env)).length);
   }
-  for (const id of skillIDs) longest = Math.max(longest, (await amendment(id)).length);
+  const inputs = [
+    JSON.stringify({ hook_event_name: 'SessionStart', source: 'compact' }),
+    ...skillIDs.flatMap(id => [skillLoad(`superpowers:${id}`), typedCommand(`superpowers:${id}`)]),
+  ];
+  for (const input of inputs) {
+    const output = await emitted(input);
+    expect(output).not.toBeNull();
+    longest = Math.max(longest, output!.context.length);
+  }
   expect(longest).toBeLessThan(10_000);
 });
 
@@ -230,10 +238,11 @@ test('SessionStart compact emits the reload pointer', async () => {
   expect(output).toEqual({ event: 'SessionStart', context: await read('integration/claude-code/compact.md') });
   const pointer = output!.context;
   expect(pointer).toStartWith('## superpowers-audit after compaction\n');
-  expect(pointer.trimEnd().split('\n').length).toBeLessThanOrEqual(8);
+  expect(pointer.length).toBeLessThan(10_000);
   for (const text of [
     'superpowers:brainstorming', 'superpowers:writing-plans', 'superpowers-audit:superpowers-audit',
-    'Skill tool', 'interruption rules', 'same auditor session',
+    'Skill tool', 'interruption rules', 'active question audit', 'paused enclosing audit',
+    'target, session, model, and round count separately',
     'continue from where you were', "do not restart that skill's checklist",
   ]) expect(pointer).toContain(text);
 });

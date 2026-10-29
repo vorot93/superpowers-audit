@@ -14,3 +14,13 @@ when reading results.
 
 `explore` cannot load skills, edit files, or launch subagents; its shell remains
 available, so read-only is still an instruction.
+
+### Question presentation
+
+The native `question` tool accepts a `questions` array. Consult its active schema
+for every authored field: question text, header, ordered option labels and
+descriptions, and `multiple`. OpenCode automatically provides a free-form answer;
+do not add a duplicate free-form option. Include that answer mechanism in review
+context. Each question in an array is a separate audit target; check all included
+versions before sending the call. Prose choices need the same complete presentation
+review, including surrounding explanation and recommendation.
