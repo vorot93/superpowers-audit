@@ -178,7 +178,11 @@ visible load error and no successful checker result.
 A bounded `opencode run --standalone --model fixture/unavailable 'Load the configured plugins'`
 initializes plugins before failing with `Model unavailable` on OpenCode 2.0.14.
 For no-model checks, deny `provider.use` for `*`, use an empty environment, and
-disable networking. The expected CLI failure alone proves nothing: inspect the
+disable external networking. On macOS, the standalone host needs loopback bind
+and traffic for its local server; denying all `network*` without that exception
+fails before plugins initialize. Keep external networking denied. Set the process
+working directory rather than passing `run --dir`, which OpenCode 2.2.1 rejects.
+The expected CLI failure alone proves nothing: inspect the
 checker result. Retain credential-free evidence for live verification, then remove
 disposable databases, caches, and unpacked installs. Never ship test fixtures in
 the npm package (`files` lists only runtime paths). A Claude Code install is a copy

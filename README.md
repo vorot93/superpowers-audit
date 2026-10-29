@@ -210,13 +210,26 @@ report templates live in the [shared skill](skills/superpowers-audit/SKILL.md).
 - Older GitHub installation and native registration were verified on OpenCode
   **2.0.15**, before the Superpowers 7.0.0 adaptation. Earlier selected live audits
   do not establish acceptance of the current authoring bodies.
-- Historical Superpowers 7.0.0 integration was registry-verified on OpenCode **2.1.2**
+- Current Superpowers 7.0.1 integration is registry-verified on OpenCode **2.2.1**
   using a production-only local tarball: complete adapted skill bodies and exact
   upstream paths, the shared skill with its OpenCode dispatch reference naming
   `explore`, and three skill/command reloads. This check uses no model.
-- Live on OpenCode 2.1.2, a writer following the shared skill made a native
-  `subagent` call with `agent: "explore"` and an explicit model (`xai/grok-4.7`).
-- Live in Claude Code with the plugin loaded by `--plugin-dir`, manual `/audit`
+- Live on OpenCode 2.2.1, manual question auditing saved an Approved report and
+  presented the exact reviewed prose. Automatic brainstorming loaded the current
+  stages, dispatched native `explore` with `xai/grok-4.7#xhigh`, corrected an
+  auditor finding, and obtained verification in the same auditor session. A later
+  controlled title change received a fresh auditor session and distinct report;
+  the final prose matched the saved target and report snapshot exactly.
+- Live on Claude Code **2.1.312**, both Skill-tool and typed-command brainstorming
+  loads delivered the current amendment. After explicitly authorized scoped probe
+  permissions, the writer used the shipped background `opencode run -f` dispatch
+  with closed stdin for three rounds, corrected findings, saved an Approved report,
+  and presented its exact reviewed prose without repeating the completed audit.
+- Auditor searches in both automatic-authoring probes exposed earlier report or
+  transcript excerpts despite scope instructions; native tools do not enforce that
+  boundary. These runs establish dispatch, revision and presentation behavior,
+  not strict isolation from earlier reviews.
+- Earlier, in Claude Code with the plugin loaded by `--plugin-dir`, manual `/audit`
   ran two auditor rounds to Approved and saved its report. It used the shipped `-f`
   dispatch with stdin closed and saved round prompt and reply files; the fallback of
   saving a reply with the Write tool when output is not redirected was exercised.
@@ -225,12 +238,15 @@ report templates live in the [shared skill](skills/superpowers-audit/SKILL.md).
   `/superpowers-audit:audit` resolve and deliver the dispatch reference and
   configuration.
 
-**Live verification limit:** not exercised live are compaction recovery; a round
-expiring (exit 124 or 142) under the shipped reference, though expiry, session
-export, and resend were exercised manually during development; complete automatic
-Superpowers 7.0.1 spec and plan authoring, audit, and handoff in either host; and
-renewed audits after actual direct human edits or changes they request. Unit/package
-tests, registry checks, and interpretation scenarios do not close that gap.
+**Live verification limit:** not exercised live are interactive native question UI,
+question batches, explicit overrides, exhausted budgets, report-save failure,
+paused enclosing document audits, and compaction recovery; a round expiring (exit
+124 or 142) under the shipped reference, though expiry, session export, and resend
+were exercised manually during development; complete automatic Superpowers 7.0.1
+spec and plan authoring, audit, and handoff in either host; and renewed document
+audits after actual human edits or requested changes. The question-revision probe
+used a controller-authored instruction. Unit/package tests, registry checks, and
+interpretation scenarios do not close these gaps.
 
 ## Development
 
