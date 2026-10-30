@@ -39,6 +39,12 @@ export const configVectors: readonly ConfigVector[] = [
     env: { ...maxRounds('3'), ...artifactDirectory(' ../notes ') },
     valid: true,
   },
+  {
+    name: 'backspace and form feed in directory',
+    options: { artifactDirectory: 'notes\bwith\fformatting' },
+    env: artifactDirectory('notes\bwith\fformatting'),
+    valid: true,
+  },
   { name: 'zero rounds', options: { maxRounds: 0 }, env: maxRounds('0'), valid: false, errorKey: 'maxRounds' },
   { name: 'fractional rounds', options: { maxRounds: 1.5 }, env: maxRounds('1.5'), valid: false, errorKey: 'maxRounds' },
   { name: 'non-numeric rounds', options: { maxRounds: '5x' }, env: maxRounds('5x'), valid: false, errorKey: 'maxRounds' },

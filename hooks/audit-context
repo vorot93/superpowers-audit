@@ -88,6 +88,8 @@ escape_function='
       else if (c == "\n") out = out "\\n"
       else if (c == "\t") out = out "\\t"
       else if (c == "\r") out = out "\\r"
+      else if (c == "\b") out = out "\\b"
+      else if (c == "\f") out = out "\\f"
       else if (c in control) out = out control[c]
       else out = out c
     }

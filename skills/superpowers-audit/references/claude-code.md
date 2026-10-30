@@ -43,7 +43,10 @@ the dispatch writes the reply to `round<N>-reply.md` and diagnostics to
 
 ### Dispatch
 
-From the project root, run each round as one Bash call with `run_in_background: true`:
+From the project root, run each round as one Bash call with
+`run_in_background: true` and `timeout: 1860000` (31 minutes). The host timeout
+leaves a minute beyond the shell's 30-minute limit below; an unattended text-prompt
+session otherwise defaults to stopping background commands after 10 minutes.
 
 ```sh
 timeout 30m opencode run --agent explore -m '<provider/model#variant>' -s '<session id>' --title 'audit: <slug>' -f '<work dir>/round<N>-prompt.md' 'Your audit assignment for this round is the attached file; follow it exactly and reply in the format it specifies.' < /dev/null > '<work dir>/round<N>-reply.md' 2> '<work dir>/round<N>.log'
@@ -73,6 +76,11 @@ alarm) means the 30-minute limit expired, most likely a stalled client or servic
 (for example stdin not redirected) or a very long auditor turn: check delivery as
 below, report a tool failure, and ask the human.
 
+If Claude Code reports that the background command was stopped at its own time
+limit, delivery is also unknown: follow the export procedure below before any
+resend, report the tool failure, and ask the human. A host stop need not produce
+exit status 124 or 142.
+
 A reply that otherwise answers the assignment but lacks its `## Assessment`
 heading is a format problem, not non-delivery: in the next round, ask the auditor
 to restate its reply in the assignment's reply format; that follow-up counts as a
@@ -86,6 +94,12 @@ context clear, export the auditor session and Read the file:
 ```sh
 opencode session export '<session id>' > '<work dir>/round<N>-export.json' 2>&1
 ```
+
+If that redirection is denied, run `opencode session export '<session id>'`
+without redirections. Read its complete output, following any truncated-output
+file references, and save it to `round<N>-export.json` with the Write tool.
+If saving is also denied, use the complete output to check delivery and report
+the evidence-save failure; do not resend merely because no export file was saved.
 
 `Session not found` means the session was never created, so no prompt arrived.
 Otherwise find the round's prompt and any assistant reply after it:

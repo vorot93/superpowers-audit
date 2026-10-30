@@ -126,8 +126,11 @@ optional and must resolve to that external directory if used.
   its session. Redirect it in every shipped, test, and probe command.
 - `opencode run -s` creates a session for a new `ses`-prefixed ID and continues an
   existing one; the default output format prints only the reply, not the session ID.
-  A round can exceed Claude Code's 10-minute foreground Bash limit, so the reference
-  dispatches in the background and waits for the completion notice.
+  Dispatch in the background with an explicit Bash `timeout: 1860000`, allowing
+  the 30-minute shell limit to expire first. Unattended text-prompt `claude -p`
+  runs otherwise stop background commands after 10 minutes; backgrounding alone
+  does not remove that limit. A host stop need not return shell exit 124 or 142:
+  inspect delivery through session export before considering a resend.
 - A non-interactive `opencode run` auto-rejects an OpenCode `ask` permission (stderr
   "auto-rejecting"); the tool call fails and the model continues, so `ask` needs no
   user configuration. An apparent hang on one is the stdin stall above. Rejection
@@ -137,7 +140,9 @@ optional and must resolve to that external directory if used.
   redirections, especially into an artifact directory outside the project. The
   dispatch therefore attaches the round prompt with `opencode run -f` (which reads
   files outside the project) instead of substituting it, and the reference gives a
-  fallback for denied redirections: the writer saves the reply with its Write tool.
+  fallback for denied redirections: the writer saves the reply or session export
+  with its Write tool. Read complete output before checking delivery; a failed
+  evidence save is not evidence that the auditor never received the prompt.
 
 ## Native verification
 
@@ -171,7 +176,10 @@ Give that directory a `package.json` with `"type": "module"` and
 external JSON paths. Expectations contain `bodies` (skill IDs mapped to full expected
 text, or null for absence), `paths` (the same IDs mapped to independently supplied
 exact native skill paths, or null for absence), and `statuses` (expected lines in
-the shared skill). Pin upstream paths, not just relative helper availability:
+the shared skill). Include the complete shared audit skill in `bodies` and `paths`,
+including its expected configuration block; status lines alone cannot verify
+configuration. Cover a string-form plugin entry with default options as well as
+configured options. Pin upstream paths, not just relative helper availability:
 the builder prompt resolves relative to the preserved brainstorming skill path.
 Remove any old result before launching so a skipped checker cannot pass on stale
 evidence. Require fresh `ok: true` output; the checker compares complete bodies,

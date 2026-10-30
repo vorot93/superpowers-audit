@@ -74,15 +74,16 @@ match the [Configuration](#configuration) table. Run
   reports what it could not read. Rejection blocks only that tool call: the
   auditor's shell can still read the same file, so keeping credentials out of
   review is an instruction to the auditor, not a guarantee.
-- Each round runs under a 30-minute limit. On macOS, which ships `perl` but not
-  `timeout`, the writer uses `perl` for it.
+- Each round uses a 30-minute shell limit and an explicit 31-minute background
+  Bash timeout, avoiding Claude Code's shorter unattended default. On macOS, which
+  ships `perl` but not `timeout`, the writer uses `perl` for the shell limit.
 - The writer runs these commands with the Bash tool, under your Claude Code
   permission rules; approve them when asked or allow them in your settings, as
   the plugin pre-authorizes nothing: `opencode models`,
   `opencode session list --format json`,
   `timeout 30m opencode run …` (or `perl -e … opencode run …`) with its output
   redirected into that directory, and `opencode session export`. If you deny the
-  redirection, the writer saves each reply itself.
+  redirection, the writer saves each reply or session export itself.
 - The writer's `reviewers` key is `anthropic/<base model id>`, with gateway and
   context-window forms such as Bedrock `us.anthropic.…-v1:0`, Vertex `@<date>`, and
   `[1m]` stripped, to match OpenCode's `anthropic/<model>` keys. If your writer IDs
