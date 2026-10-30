@@ -111,4 +111,44 @@ export const configVectors: readonly ConfigVector[] = [
   { name: 'empty entry', env: reviewers('a/w=b/r,,c/w=d/r'), valid: false, errorKey: 'reviewers' },
   { name: 'missing separator', env: reviewers('a/w'), valid: false, errorKey: 'reviewers' },
   { name: 'duplicate writer', env: reviewers('a/w=b/r,a/w=c/r'), valid: false, errorKey: 'reviewers' },
+  // ECMAScript whitespace: both hosts must reject invisible model separators
+  // and trim directory boundaries without changing internal Unicode text.
+  ...Array.from('\u0009\u000a\u000b\u000c\u000d \u00a0\u1680\u2000\u2001\u2002\u2003\u2004\u2005\u2006\u2007\u2008\u2009\u200a\u2028\u2029\u202f\u205f\u3000\ufeff').flatMap((space): ConfigVector[] => {
+    const name = `whitespace U+${space.codePointAt(0)!.toString(16).padStart(4, '0')}`;
+    return [
+      {
+        name: `${name} in writer`,
+        options: { reviewers: { [`a/w${space}riter`]: 'b/r' } },
+        env: reviewers(`a/w${space}riter=b/r`),
+        valid: false,
+        errorKey: 'reviewers',
+      },
+      {
+        name: `${name} in reviewer variant`,
+        options: { reviewers: { 'a/w': `b/r#hi${space}gh` } },
+        env: reviewers(`a/w=b/r#hi${space}gh`),
+        valid: false,
+        errorKey: 'reviewers',
+      },
+      {
+        name: `${name} around directory`,
+        options: { artifactDirectory: `${space}筆記${space}notes${space}` },
+        env: artifactDirectory(`${space}筆記${space}notes${space}`),
+        valid: true,
+      },
+      {
+        name: `${name} only directory`,
+        options: { artifactDirectory: space },
+        env: artifactDirectory(space),
+        valid: false,
+        errorKey: 'artifactDirectory',
+      },
+    ];
+  }),
+  {
+    name: 'non-whitespace Unicode in model references and directory boundaries',
+    options: { reviewers: { 'a/作家': 'b/評者' }, artifactDirectory: '\u200b筆記\u0085' },
+    env: { ...reviewers('a/作家=b/評者'), ...artifactDirectory('\u200b筆記\u0085') },
+    valid: true,
+  },
 ];

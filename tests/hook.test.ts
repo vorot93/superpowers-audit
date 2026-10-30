@@ -1,8 +1,8 @@
 import { expect, test } from 'bun:test';
-import { mkdtemp, readFile, rm } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import { statSync } from 'node:fs';
-import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { homedir, tmpdir } from 'node:os';
+import { dirname, join } from 'node:path';
 import { parseOptions } from '../src/options.js';
 import { renderConfiguration } from '../src/skill.js';
 import { configVectors } from './support/config-vectors.js';
@@ -176,6 +176,65 @@ test('stays under the context limit', async () => {
     longest = Math.max(longest, output!.context.length);
   }
   expect(longest).toBeLessThan(10_000);
+});
+
+test('oversized configuration returns a complete correction notice', async () => {
+  const mappings = Array.from({ length: 100 }, (_, i) => `provider/writer-${i}=other/reviewer-model#high`).join(',');
+  const cases: Record<string, string>[] = [
+    { CLAUDE_PLUGIN_OPTION_REVIEWERS: mappings },
+    { CLAUDE_PLUGIN_OPTION_REVIEWERS: 'invalid'.repeat(2_000) },
+    { CLAUDE_PLUGIN_OPTION_ARTIFACTDIRECTORY: '筆'.repeat(2_000) },
+  ];
+  for (const env of cases) {
+    const context = await auditContext(env);
+    expect(Buffer.byteLength(context)).toBeLessThanOrEqual(10_000);
+    expect(context.startsWith('## Audit context unavailable\n')).toBe(true);
+    expect(context).toContain('reload');
+    expect(context).toContain('Do not dispatch');
+    expect(context).not.toContain('## Configuration\n');
+    expect(context).not.toContain('## Host dispatch:');
+  }
+});
+
+test('context budget counts decoded bytes and preserves the exact boundary', async () => {
+  const base = await auditContext({ CLAUDE_PLUGIN_OPTION_ARTIFACTDIRECTORY: 'x' });
+  const directory = 'x'.repeat(10_000 - Buffer.byteLength(base) + 1);
+  const context = await auditContext({ CLAUDE_PLUGIN_OPTION_ARTIFACTDIRECTORY: directory });
+  expect(Buffer.byteLength(context)).toBe(10_000);
+  expect(context).toBe(reference + '\n' + renderConfiguration(parseOptions({ artifactDirectory: directory })));
+  expect(JSON.stringify(context).length).toBeGreaterThan(10_000);
+  const oversized = await auditContext({ CLAUDE_PLUGIN_OPTION_ARTIFACTDIRECTORY: directory + 'x' });
+  expect(oversized.startsWith('## Audit context unavailable\n')).toBe(true);
+});
+
+test('oversized context assets return a notice for each hook event', async () => {
+  const parent = join(homedir(), '.superpowers', 'superpowers-audit');
+  await mkdir(parent, { recursive: true });
+  const root = await mkdtemp(join(parent, 'hook-context-'));
+  try {
+    for (const path of [
+      'skills/superpowers-audit/references/claude-code.md',
+      'integration/claude-code/brainstorming.md',
+      'integration/claude-code/writing-plans.md',
+      'integration/claude-code/compact.md',
+    ]) {
+      await mkdir(dirname(join(root, path)), { recursive: true });
+      await writeFile(join(root, path), 'x'.repeat(10_001));
+    }
+    const inputs = [
+      JSON.stringify(auditLoad),
+      ...skillIDs.flatMap(id => [skillLoad(`superpowers:${id}`), typedCommand(`superpowers:${id}`)]),
+      JSON.stringify({ hook_event_name: 'SessionStart', source: 'compact' }),
+    ];
+    for (const input of inputs) {
+      const output = await emitted(input, { CLAUDE_PLUGIN_ROOT: root });
+      expect(output?.event).toBe(JSON.parse(input).hook_event_name);
+      expect(output?.context.startsWith('## Audit context unavailable\n')).toBe(true);
+      expect(Buffer.byteLength(output!.context)).toBeLessThanOrEqual(10_000);
+    }
+  } finally {
+    await rm(root, { recursive: true });
+  }
 });
 
 test('hook is executable and registered for every event', async () => {

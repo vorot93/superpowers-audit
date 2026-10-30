@@ -111,7 +111,9 @@ optional and must resolve to that external directory if used.
   `--settings '{"pluginConfigs":{"superpowers-audit@inline":{"options":{…}}}}'`.
 - Claude Code reads only `hookSpecificOutput.additionalContext` with the firing
   `hookEventName`, capped at 10,000 characters, and only from a `hooks.json` with a
-  top-level `hooks` wrapper. Frame added context as this plugin's workflow material:
+  top-level `hooks` wrapper. Keep the hook's 10,000-byte guard on decoded context,
+  before JSON transport escaping; oversized settings or assets produce a complete
+  correction notice. Frame added context as this plugin's workflow material:
   text that reads like an injection is ignored. Quote `${CLAUDE_PLUGIN_ROOT}` in hook
   commands; `${CLAUDE_PLUGIN_ROOT}` is not set in the writer's Bash tool calls.
 - The hook must exit 0 on every path: a failing UserPromptExpansion hook would break
@@ -120,7 +122,9 @@ optional and must resolve to that external directory if used.
   bun test tests/hook.test.ts` after changing it. Keep the hook input, content, and
   option values in pipes and awk: dash 0.5.13 in the C locale corrupts non-ASCII
   bytes on assignment (it inserts `0x81` escape bytes), and typed prompts carry the
-  user's own text.
+  user's own text. C-locale `[[:space:]]` is ASCII-only; keep complete UTF-8
+  whitespace matches aligned with ECMAScript's `\s`/`trim` through the shared
+  configuration vectors.
 - `opencode run` waits for end of input on a non-terminal stdin, and Claude Code's
   Bash stdin may never close, so a run without `< /dev/null` can stall before creating
   its session. Redirect it in every shipped, test, and probe command.

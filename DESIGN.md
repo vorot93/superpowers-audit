@@ -93,6 +93,15 @@ list options with commas and writes each reviewer entry as `writer=reviewer`, so
 writers and reviewers exclude commas and `=` in both hosts. Error wording is
 host-specific; the shared contract is the block shape and the named key.
 
+Whitespace follows ECMAScript's `\s`/`trim` set in both hosts. The C-locale hook
+matches complete UTF-8 sequences explicitly: locale-dependent character classes
+would silently accept invisible separators or resolve a different artifact path.
+Before JSON escaping for transport, every hook context is bounded to 10,000 UTF-8
+bytes, conservatively within Claude Code's character cap. Overflow replaces the
+whole context with a correction notice; partially delivered dispatch instructions
+or settings must not be mistaken for usable context. This is a delivery guard,
+not enforcement of the writer's response to the notice.
+
 ## Adapt only known skill bodies
 
 Superpowers adaptations are in-memory registry transforms. They insert question

@@ -98,12 +98,16 @@ escape_function='
 
 # emit EVENT: standard input, exactly, as EVENT's additional context. The
 # appended newline terminates the last line, so a final newline survives.
+# Bound decoded UTF-8 bytes, conservatively within the host character cap;
+# never let truncation turn a configuration or amendment into partial guidance.
 emit() {
   { cat; printf '\n'; } | awk -v event="$1" "$escape_function"'
-    { context = context (NR > 1 ? "\\n" : "") escape($0) }
+    { context = context (NR > 1 ? "\n" : "") $0 }
     END {
+      if (length(context) > 10000)
+        context = "## Audit context unavailable\n\nThe superpowers-audit hook context exceeds its 10,000-byte delivery budget. Request correction: shorten configured reviewer mappings or artifactDirectory; if defaults also exceed the budget, the plugin reference or amendment needs shortening. Then reload the affected skill. Do not dispatch an auditor or continue the affected audit stages using incomplete context or fallback defaults."
       if (context != "")
-        printf "{\"hookSpecificOutput\":{\"hookEventName\":\"%s\",\"additionalContext\":\"%s\"}}\n", event, context
+        printf "{\"hookSpecificOutput\":{\"hookEventName\":\"%s\",\"additionalContext\":\"%s\"}}\n", event, escape(context)
     }'
 }
 
@@ -117,6 +121,10 @@ configuration() {
   awk "$escape_function"'
     function fail(message) { errors = errors (errors == "" ? "" : "\n") message }
     BEGIN {
+      # Match ECMAScript \s and trim(), including NBSP and BOM. In the C
+      # locale, match complete UTF-8 sequences rather than individual bytes.
+      # U+00A0, U+1680, U+2000-200A, U+2028-2029, U+202F, U+205F, U+3000, U+FEFF.
+      whitespace = "([[:space:]]|\302\240|\341\232\200|\342\200[\200-\212]|\342\200[\250\251]|\342\200\257|\342\201\237|\343\200\200|\357\273\277)"
       writer_pattern = "^[^[:space:]/#,=]+/[^[:space:]#,=]+$"
       reviewer_pattern = "^[^[:space:]/#,=]+/[^[:space:]#,=]+(#[^[:space:]#,=]+)?$"
       list = ENVIRON["CLAUDE_PLUGIN_OPTION_REVIEWERS"]
@@ -125,7 +133,7 @@ configuration() {
         separator = index(entries[i], "=")
         writer = substr(entries[i], 1, separator - 1)
         reviewer = substr(entries[i], separator + 1)
-        if (separator == 0 || writer !~ writer_pattern || reviewer !~ reviewer_pattern)
+        if (separator == 0 || writer !~ writer_pattern || reviewer !~ reviewer_pattern || writer ~ whitespace || reviewer ~ whitespace)
           fail("reviewers: entry \"" entries[i] "\" is not writer-provider/model=reviewer-provider/model[#variant]")
         else if (writer in seen)
           fail("reviewers: writer \"" writer "\" is mapped more than once")
@@ -141,8 +149,8 @@ configuration() {
 
       if ("CLAUDE_PLUGIN_OPTION_ARTIFACTDIRECTORY" in ENVIRON) {
         directory = ENVIRON["CLAUDE_PLUGIN_OPTION_ARTIFACTDIRECTORY"]
-        sub(/^[[:space:]]+/, "", directory)
-        sub(/[[:space:]]+$/, "", directory)
+        sub("^" whitespace "+", "", directory)
+        sub(whitespace "+$", "", directory)
         if (directory == "") fail("artifactDirectory: must not be blank")
       }
 

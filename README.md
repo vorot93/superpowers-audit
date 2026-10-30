@@ -177,6 +177,13 @@ placeholders; replace them with explicit choices from your OpenCode model catalo
 Invalid or unknown options produce a visible correction request before dispatch
 rather than silently activating defaults.
 
+Both hosts reject Unicode whitespace in model references and trim it from the
+ends of `artifactDirectory`. Claude Code hook context has a 10,000-byte budget
+(conservatively within its character cap). Oversized context produces a complete
+correction notice: shorten the configured mappings or directory, then reload the
+skill. If defaults also exceed the budget, the plugin's reference or amendment
+needs shortening.
+
 ## Integration and limits
 
 In OpenCode, automatic integration checks each skill independently against the
@@ -248,9 +255,9 @@ The native runs below predate the routine-offer and nested-question clarificatio
 
 **Live verification limit:** not exercised live are interactive native question UI,
 question batches, explicit overrides, exhausted budgets, report-save failure,
-routine-offer exemptions, paused enclosing document or question audits, and
-compaction recovery; a round expiring (exit 124 or 142) under the shipped reference,
-though expiry, session export, and resend
+routine-offer exemptions, paused enclosing document or question audits,
+compaction recovery, and oversized-context recovery; a round expiring (exit 124 or
+142) under the shipped reference, though expiry, session export, and resend
 were exercised manually during development; complete automatic Superpowers 7.0.1
 spec and plan authoring, audit, and handoff in either host; and renewed document
 audits after actual human edits or requested changes. The question-revision probe
