@@ -123,11 +123,14 @@ recorded separately; it neither claims auditor approval nor waives later questio
 
 The automatic Question Review stage loads the shared skill before brainstorming presentations of
 multiple explicit alternatives and every mandatory approaches discussion, including
-one viable approach with reasons others were rejected. Ordinary single suggestions
-and open questions are exempt. Loading the skill for a plan audit does not add
-review to its execution-method menu. A question audit may run while a document
-audit is paused, with serialized calls and distinct sessions/counts; the writer
-resumes the document audit after obtaining your actual answer.
+one viable approach with reasons others were rejected. Ordinary single suggestions,
+open questions, the lightweight upstream opt-out offer, and ordinary yes/no offers
+of recon, a throwaway spike or the visual companion are exempt. Comparing substantive
+alternatives or their trade-offs triggers review. Loading the skill for a plan
+audit does not add review to its execution-method menu. A question audit may run
+while a document or question audit is paused, with serialized calls and distinct
+sessions, budgets and reports. The writer retains every paused parent and resumes
+the immediate parent after obtaining your actual answer, then works outward.
 
 The auditor must differ in **both provider and model family/class** from every
 known drafting contributor and the current writer. Variants, aliases, or gateways
@@ -175,19 +178,21 @@ rather than silently activating defaults.
 
 ## Integration and limits
 
-In OpenCode, automatic integration recognizes the exact Superpowers 7.0.1 skill
-bodies, not just a package version. Older versions are not adapted.
-Changed or customized definitions retain their content with an **Audit integration
-unavailable** notice; missing skills stay absent. Check plugin order and the status
-in the shared audit skill when integration is unavailable. Installed Superpowers
-files are never modified.
+In OpenCode, automatic integration checks each skill independently against the
+exact supported Superpowers 7.0.1 body, normalizing CRLF line endings. Package
+version is not checked: an identical skill body from another release also matches,
+even when that release's other skill does not. Changed or customized definitions
+retain their content with an **Audit integration unavailable** notice; missing
+skills stay absent. Check plugin order and the status in the shared audit skill
+when integration is unavailable. Installed Superpowers files are never modified.
 
 In Claude Code, the audit stages are added beside the upstream skill rather than
 spliced into it: when `superpowers:brainstorming` or `superpowers:writing-plans`
 loads through the Skill tool or is typed as a slash command, the plugin adds an
 amendment that names the upstream steps it supersedes. There is no body check, so
 the stages are added for any Superpowers version, but the amendments are written
-against Superpowers 7.0.1 and may misdescribe the steps of a later release.
+against Superpowers 7.0.1 and may misdescribe the steps of other releases, earlier
+or later.
 
 Claude Code re-attaches invoked skill bodies after compaction but not hook output,
 so on compaction the plugin adds a pointer telling the writer to reload the
@@ -207,21 +212,23 @@ report templates live in the [shared skill](skills/superpowers-audit/SKILL.md).
 
 **Verification scope:**
 
+The native runs below predate the routine-offer and nested-question clarifications.
+
 - Older GitHub installation and native registration were verified on OpenCode
   **2.0.15**, before the Superpowers 7.0.0 adaptation. Earlier selected live audits
   do not establish acceptance of the current authoring bodies.
-- Current Superpowers 7.0.1 integration is registry-verified on OpenCode **2.2.1**
+- The initial Superpowers 7.0.1 integration was registry-verified on OpenCode **2.2.1**
   using a production-only local tarball: complete adapted skill bodies and exact
   upstream paths, the shared skill with its OpenCode dispatch reference naming
   `explore`, and three skill/command reloads. This check uses no model.
 - Live on OpenCode 2.2.1, manual question auditing saved an Approved report and
-  presented the exact reviewed prose. Automatic brainstorming loaded the current
+  presented the exact reviewed prose. Automatic brainstorming loaded the then-current
   stages, dispatched native `explore` with `xai/grok-4.7#xhigh`, corrected an
   auditor finding, and obtained verification in the same auditor session. A later
   controlled title change received a fresh auditor session and distinct report;
   the final prose matched the saved target and report snapshot exactly.
 - Live on Claude Code **2.1.312**, both Skill-tool and typed-command brainstorming
-  loads delivered the current amendment. After explicitly authorized scoped probe
+  loads delivered the then-current amendment. After explicitly authorized scoped probe
   permissions, the writer used the shipped background `opencode run -f` dispatch
   with closed stdin for three rounds, corrected findings, saved an Approved report,
   and presented its exact reviewed prose without repeating the completed audit.
@@ -240,8 +247,9 @@ report templates live in the [shared skill](skills/superpowers-audit/SKILL.md).
 
 **Live verification limit:** not exercised live are interactive native question UI,
 question batches, explicit overrides, exhausted budgets, report-save failure,
-paused enclosing document audits, and compaction recovery; a round expiring (exit
-124 or 142) under the shipped reference, though expiry, session export, and resend
+routine-offer exemptions, paused enclosing document or question audits, and
+compaction recovery; a round expiring (exit 124 or 142) under the shipped reference,
+though expiry, session export, and resend
 were exercised manually during development; complete automatic Superpowers 7.0.1
 spec and plan authoring, audit, and handoff in either host; and renewed document
 audits after actual human edits or requested changes. The question-revision probe

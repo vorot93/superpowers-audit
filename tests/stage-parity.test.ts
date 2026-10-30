@@ -73,9 +73,15 @@ test('Claude Code amendments are complete on their own', () => {
   expectInOrder(brainstorming, [
     '### Spec Self-Review', '### Adversarial Review', '### Human Document Review', 'Do you approve this design for planning?',
   ]);
-  for (const route of ['quick, clear task', 'small change', 'skip the questions', 'spike']) {
-    expect(flat(brainstorming)).toContain(route);
+  const applicability = flat(brainstorming.split('### When it applies\n')[1]!.split('\n### ')[0]!);
+  for (const route of [
+    'Both short and full written designs receive the document stages below.',
+    'quick, clear task', 'skip the questions', 'authorized throwaway spike retain upstream document-stage exemptions',
+  ]) {
+    expect(applicability).toContain(route);
   }
+  // Inspect the replacement, not the quoted upstream route it supersedes.
+  expect(flat(brainstorming)).toContain('Instead: Short designs omit the builder check, then receive Spec Self-Review, Adversarial Review, and Human Document Review.');
   expectInOrder(amendment('writing-plans'), ['superpowers-audit:superpowers-audit', 'Execution Handoff']);
 
   for (const id of skillIDs) {
@@ -98,6 +104,7 @@ test('both authoring hosts explicitly gate short/full designs and every mandator
     expect(text).toContain('before showing it');
     expect(text).toContain('including reentry');
     expect(text).toContain("writing-plans' execution-method menu is exempt");
+    expect(text.toLowerCase()).toContain('menus actually presented while brainstorming is active still receive question review');
     expect(text).not.toContain('Only a project with a written design');
     expect(text).not.toContain('small change described in chat');
     expect(text).not.toContain('For software, invoke');

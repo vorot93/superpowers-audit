@@ -40,9 +40,11 @@ design. Reports retain the exact presentation snapshot and review coverage, beca
 a mutable working target alone cannot establish which version was reviewed.
 
 Every question owns a fresh audit and budget, even within a native batch. A question
-needed by a document audit may be reviewed while that audit is explicitly paused;
-calls are serialized and both continuation identities remain separate. This is
-writer-owned conversation context, not persistent plugin workflow state.
+needed by a document or question audit may be reviewed while that audit is explicitly
+paused. Calls are serialized; every paused ancestor retains its identity, budget
+and findings. Actual human answers resume the immediate parent before proceeding
+outward. Revising a parent question does not create a new target or reset its budget.
+This is writer-owned conversation context, not persistent plugin workflow state.
 
 Question publication requires approval, a saved report and an unchanged outgoing
 presentation. Explicit human per-question overrides are separate records with actual
@@ -50,7 +52,10 @@ review coverage and any publication failure; they do not manufacture auditor
 approval or authorize later questions. An unchanged report-save retry adds no round
 and changes no outcome. Scope is active brainstorming, including reentry; manual
 requests can identify questions outside it, while planning's execution menu stays
-outside the automatic trigger.
+outside the automatic trigger. The lightweight upstream opt-out and ordinary yes/no
+recon, spike and visual-companion offers are permission requests, not substantive
+alternative comparisons. Actual comparisons still require review; mandatory
+approaches presentations always do.
 
 The shared body is host-neutral: it names no OpenCode tool, agent, or context
 block. Each host appends its own dispatch reference

@@ -25,7 +25,12 @@ Question approval permits presentation, not an answer or design approval.
 
 Keep open questions and ordinary single recommendations or size suggestions;
 they need no question audit unless they compare alternatives or are the mandatory
-approaches presentation. This stage includes builder and audit clarifications.
+approaches presentation. The upstream one-line opt-out offer and ordinary yes/no
+offers of recon, a throwaway spike, or the visual companion need no question audit.
+If an offer compares substantive alternatives or their trade-offs, review it;
+the mandatory approaches presentation always requires review.
+This stage includes builder and audit clarifications, including questions needed
+by another question audit; follow the shared skill's enclosing-audit rules.
 It ends at the handoff to planning: writing-plans' execution-method menu is exempt.
 Reentry into brainstorming restores this stage.
 

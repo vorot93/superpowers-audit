@@ -86,6 +86,9 @@ optional and must resolve to that external directory if used.
   `tests/stage-parity.test.ts` holds both to the same stage strings. Review each
   amendment as instructions beside the upstream skill: its "supersedes" quotes must
   name real upstream steps, so recheck them on every Superpowers release.
+  Route assertions must match operative amendment text, not superseded quotations;
+  check the active-brainstorming menu safeguard in both hosts even on routes exempt
+  from document review.
 
 ## Claude Code host traps
 

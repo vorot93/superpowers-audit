@@ -30,6 +30,13 @@ genuine open questions, and bare approval confirmations do not trigger review un
 they actually offer or compare alternatives. A comparison phrased as a confirmation
 still triggers review. Explicit alternative sizes do trigger it.
 
+The upstream one-line opt-out ("Or if you'd rather I just dive in, say so") and
+ordinary yes/no offers of recon, a throwaway spike, or the visual companion are
+single permission offers and need no question audit. Accept/decline responses
+alone do not count as substantive alternatives. If an offer compares substantive
+alternatives or their trade-offs, review the whole presentation. The mandatory
+approaches presentation always requires review.
+
 Automatic question review ends at the handoff from brainstorming to planning.
 Loading this skill for a plan audit does not audit its execution-method menu.
 An explicit manual question-audit request is supported outside brainstorming.
@@ -114,12 +121,16 @@ Start the auditor conversation as the host dispatch reference describes, with th
 explicit model, a short description, and the filled auditor assignment below.
 Keep the auditor session ID, model, and round count in the conversation. Each
 follow-up uses the same auditor agent, model, and session. Dispatch one auditor call
-at a time. A separate question audit may run while an enclosing document audit is
-explicitly paused: retain the parent's target, session, model, count and unresolved
-findings; finish the question review, obtain the human's actual answer, then resume
-the parent with that answer. Keep both continuation identities and budgets separate;
-do not dispatch concurrently or reset the parent. If either identity/progress is
-missing, recover or ask rather than guessing. The auditor works read-only by task instruction under ordinary
+at a time. A separate question audit may run while an enclosing document or question
+audit is explicitly paused. Retain every paused parent's target/version, session,
+model, count and unresolved findings. Give the child its own fresh independent
+auditor, budget and report under the same rules as any question. Finish the child
+review, obtain the human's actual answer, then resume its immediate parent with
+that answer; repeat outward as each parent finishes. Keep all continuation identities
+and budgets separate; do not dispatch concurrently or reset a parent. A revision of
+the parent's question is not a separate child and stays within the parent's budget.
+If any identity/progress is missing, recover or ask rather than guessing.
+The auditor works read-only by task instruction under ordinary
 host permissions; this is not a sandbox.
 
 Read every finding, following host output references or pages if needed. Verify

@@ -11,7 +11,7 @@ export interface SkillAdaptation {
 export const supportedHashes: Record<SupportedSkill, { baseline: string; transformed: string }> = {
   brainstorming: {
     baseline: '8e43c8181a17642ac8c8b6e1c3fa29294ef5d3fa64f67eaa917ff709298a0b96',
-    transformed: '912eca77a6ea1b5e599c475fb43052edb86898c85c6ca878a355768b3b9df0e4',
+    transformed: '621f59c0cf5d19780447e0d40d3eeeefda4394a69bcad24d7cb7187eb9b75288',
   },
   'writing-plans': {
     baseline: '1fa01b954171b1d2b8bc0208dfbc6a01edf8a2ca715d18f76f043952e37e744f',
@@ -39,10 +39,16 @@ const edits: Record<SupportedSkill, readonly (readonly [string, string])[]> = {
         + 'Question approval permits presentation, not an answer or design approval.\n\n'
         + 'Keep open questions and ordinary single recommendations or size suggestions;\n'
         + 'they need no question audit unless they compare alternatives or are the mandatory\n'
-        + 'approaches presentation. Quick-task, question opt-out, and throwaway-spike routes\n'
+        + 'approaches presentation. The upstream one-line opt-out offer and ordinary yes/no\n'
+        + 'offers of recon, a throwaway spike, or the visual companion need no question audit.\n'
+        + 'If an offer compares substantive alternatives or their trade-offs, review it;\n'
+        + 'the mandatory approaches presentation always requires review.\n'
+        + 'Quick-task, question opt-out, and throwaway-spike routes\n'
         + 'retain their document-stage exemptions; menus actually presented while\n'
         + 'brainstorming is active still receive Question Review. This stage includes builder\n'
-        + "and audit clarifications. It ends at the handoff to planning: writing-plans'\n"
+        + 'and audit clarifications, including questions needed by another question audit;\n'
+        + "follow the shared skill's enclosing-audit rules.\n"
+        + "It ends at the handoff to planning: writing-plans'\n"
         + 'execution-method menu is exempt. Reentry into brainstorming restores this stage.\n\n'
         + '## Look Before You Ask',
     ],
