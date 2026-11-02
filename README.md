@@ -259,9 +259,21 @@ The native runs below predate the routine-offer and nested-question clarificatio
   a Skill-tool load of `superpowers:brainstorming`. Both `/audit` and
   `/superpowers-audit:audit` resolve and deliver the dispatch reference and
   configuration.
+- Reviewer chains were registry-verified on OpenCode **2.2.5** with no model, for a
+  string-form plugin entry with default options and for a configured two-member
+  chain rendered as an array.
+- Live on Claude Code **2.1.316** with `--plugin-dir`, repeated `reviewers` entries
+  arrived in entry order. A manual `/audit` of a spec with a seeded contradiction
+  ran a two-member chain (`xai/grok-4.7#xhigh`, then `openai/gpt-6-astra#high`) with
+  `maxRounds` 1. The first member's single round ended Changes Required. The writer
+  applied the accepted fixes, and the second member reviewed the revision in a fresh
+  session. Its prompt carried no earlier findings, and its only tool call read the
+  target. It approved. The report listed both members in order with versions, and
+  the handoff stated clean chain approval.
 
 **Live verification limit:** not exercised live are interactive native question UI,
-question batches, explicit overrides, exhausted budgets, report-save failure,
+question batches and question chains, explicit overrides, a chain in OpenCode, the
+Failed-member pause, report-save failure,
 routine-offer exemptions, paused enclosing document or question audits,
 compaction recovery, and oversized-context recovery; a round expiring (exit 124 or
 142) under the shipped reference, though expiry, session export, and resend
