@@ -25,10 +25,12 @@ dispatch error naming the variant is a tool failure.
 
 ### Auditor session
 
-Before round 1, choose the session ID `ses_audit<YYYYMMDDHHMMSS><slug>`: the
-current UTC time, then the topic as at most 12 lowercase letters and digits.
-Confirm it is absent from `opencode session list --format json`. `-s` creates or
-continues a session, so never reuse an existing ID for a new audit.
+Before each chain member's round 1, choose a new session ID
+`ses_audit<YYYYMMDDHHMMSS><slug>`: the current UTC time, then the topic as at most
+12 lowercase letters and digits. Confirm it is absent from
+`opencode session list --format json`. `-s` creates or continues a session, so
+never reuse an existing ID for a new audit or member; a member's follow-up rounds
+reuse its own ID.
 
 The auditor is OpenCode's `explore` agent. It cannot load skills, edit files, or
 launch subagents; its shell remains available, so read-only is still an instruction.
@@ -49,7 +51,7 @@ leaves a minute beyond the shell's 30-minute limit below; an unattended text-pro
 session otherwise defaults to stopping background commands after 10 minutes.
 
 ```sh
-timeout 30m opencode run --agent explore -m '<provider/model#variant>' -s '<session id>' --title 'audit: <slug>' -f '<work dir>/round<N>-prompt.md' 'Your audit assignment for this round is the attached file; follow it exactly and reply in the format it specifies.' < /dev/null > '<work dir>/round<N>-reply.md' 2> '<work dir>/round<N>.log'
+timeout 30m opencode run --agent explore -m '<provider/model#variant>' -s '<session id>' --title 'audit: <slug>' -f '<work dir>/round<N>-prompt.md' 'Your audit assignment for this round is the attached file, already delivered with this message; follow it exactly and reply in the format it specifies.' < /dev/null > '<work dir>/round<N>-reply.md' 2> '<work dir>/round<N>.log'
 ```
 
 Pass the resolved model with its `#variant`, if any. `-f` attaches the prompt
@@ -109,8 +111,9 @@ Otherwise find the round's prompt and any assistant reply after it:
   recovering an existing reply adds no round;
 - ask the human if the prompt arrived without a reply.
 
-After compaction, the session ID and round count come from the conversation; the
-work files and the OpenCode session are evidence for re-establishing them.
+After compaction, the chain position, session ID, and round count come from the
+conversation; the work files and the OpenCode sessions are evidence for
+re-establishing them.
 
 ### Permissions
 

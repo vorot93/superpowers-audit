@@ -459,8 +459,9 @@ through Code Mode if needed.
 
 Start a foreground native \`subagent\` call with \`agent: "explore"\`,
 explicit \`model\`, a short \`description\`, and the filled auditor assignment as
-\`prompt\`. Omit \`sessionID\` initially. Keep the returned \`sessionID\`. Each follow-up passes
-the same agent, model, and \`sessionID\`. Follow native output references and pages
+\`prompt\`. Omit \`sessionID\` on each chain member's first call. Keep that member's returned
+\`sessionID\`. Each of that member's follow-ups passes the same agent, model, and
+\`sessionID\`. Follow native output references and pages
 when reading results.
 
 \`explore\` cannot load skills, edit files, or launch subagents; its shell remains
@@ -951,8 +952,9 @@ through Code Mode if needed.
 
 Start a foreground native \`subagent\` call with \`agent: "explore"\`,
 explicit \`model\`, a short \`description\`, and the filled auditor assignment as
-\`prompt\`. Omit \`sessionID\` initially. Keep the returned \`sessionID\`. Each follow-up passes
-the same agent, model, and \`sessionID\`. Follow native output references and pages
+\`prompt\`. Omit \`sessionID\` on each chain member's first call. Keep that member's returned
+\`sessionID\`. Each of that member's follow-ups passes the same agent, model, and
+\`sessionID\`. Follow native output references and pages
 when reading results.
 
 \`explore\` cannot load skills, edit files, or launch subagents; its shell remains

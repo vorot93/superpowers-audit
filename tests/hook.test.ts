@@ -281,7 +281,7 @@ test('reference covers the dispatch contract', () => {
   expect(commands.length).toBeGreaterThan(0);
   for (const line of commands) {
     expect(line).toContain("--title 'audit: <slug>' -f '<work dir>/round<N>-prompt.md' 'Your audit assignment for this"
-      + " round is the attached file; follow it exactly and reply in the format it specifies.' < /dev/null");
+      + " round is the attached file, already delivered with this message; follow it exactly and reply in the format it specifies.' < /dev/null");
   }
   expect(reference).not.toContain('$(cat');
 });
@@ -323,4 +323,12 @@ test('SessionStart other than compact emits nothing', async () => {
   for (const source of ['startup', 'resume', 'clear']) {
     expect(await runHook(JSON.stringify({ hook_event_name: 'SessionStart', source }))).toEqual(silent);
   }
+});
+
+test('Claude Code reference and compaction pointer track each chain member', async () => {
+  const flatText = (t: string) => t.replace(/\s+/g, ' ');
+  expect(flatText(reference)).toContain("Before each chain member's round 1, choose a new session ID");
+  expect(flatText(reference)).toContain('the chain position, session ID, and round count come from the conversation');
+  const compact = flatText(await read('integration/claude-code/compact.md'));
+  for (const part of ['resolved chain', 'remaining members', 'unresolved findings', 'completed members']) expect(compact).toContain(part);
 });

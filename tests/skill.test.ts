@@ -207,3 +207,7 @@ test('renders a configuration error block for invalid options', () => {
     '## Configuration error\n\nRequest correction from the human before auditor dispatch. Do not use fallback defaults.',
   );
 });
+
+test('OpenCode dispatch starts a fresh session for each reviewer', async () => {
+  expect(flat(await openCodeDispatch())).toContain("Omit `sessionID` on each chain member's first call.");
+});
