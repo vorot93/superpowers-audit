@@ -136,10 +136,10 @@ configuration() {
         reviewer = substr(entries[i], separator + 1)
         if (separator == 0 || writer !~ writer_pattern || reviewer !~ reviewer_pattern || writer ~ whitespace || reviewer ~ whitespace)
           fail("reviewers: entry \"" entries[i] "\" is not writer-provider/model=reviewer-provider/model[#variant]")
-        else if ((writer SUBSEP reviewer) in seen)
+        else if ((writer "=" reviewer) in seen)
           fail("reviewers: reviewer \"" reviewer "\" is listed more than once for writer \"" writer "\"")
         else {
-          seen[writer, reviewer] = 1
+          seen[writer "=" reviewer] = 1
           if (!(writer in members)) { order[++writers] = writer; members[writer] = "" }
           members[writer] = members[writer] (members[writer] == "" ? "" : ",\n") "          \"" escape(reviewer) "\""
         }

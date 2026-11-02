@@ -161,7 +161,9 @@ Label each revision of the target sent to an auditor v1, v2, … in the conversa
 and report; labels are evidence, not stored state. A member's approval covers only
 the version it reviewed. When a member's turn ends, record its outcome from the
 outcome table below, evaluated for that member's conversation, with the version it
-last reviewed, or "none".
+last reviewed, or "none". Labels stay in the writer's conversation and report; a
+member's prompts identify the target by path and content without its chain label or
+any sign that earlier versions were reviewed.
 
 A tool or model failure (including undelivered or ambiguous delivery that the host
 dispatch reference sends to the human), an unavailable member, or an independence
@@ -184,7 +186,8 @@ The effective chain is each position's final occupant, excluding members the hum
 removed or proceeded past. The approval gates and the handoff baseline evaluate the
 effective chain; a replaced, removed, or proceeded-past member stays in the report
 and status line as a failed attempt with its version. An explicit human cancellation
-stops the whole chain; record later members as not run. A fresh audit, after
+stops the whole chain; record later members as not run. Cancelling at a Failed pause
+records the paused member Failed with its version and runs no later member. A fresh audit, after
 post-chain changes or otherwise, is a new full chain with new sessions and
 per-member budgets.
 
@@ -245,7 +248,7 @@ Use this follow-up prompt, filling each field:
 
 \`\`\`text
 Round: current / maxRounds for this reviewer on this target.
-Target kind/version and governing inputs: paths.
+Target kind, path, what changed since this reviewer's previous round, and governing inputs: paths.
 For a question: current complete presentation, selection behavior, and changed context.
 Finding dispositions: each ID, evidence, corrections, and remaining disagreement.
 Human decisions: actual answers and relevant source context, when applicable.
@@ -304,7 +307,9 @@ member's conversation:
 | Approved | The member accepted the version at its last round and the writer has no remaining blocking objection. |
 
 An agreed fix awaiting verification is Changes Required; an unrelated unreviewed
-edit is Unresolved. Recovered errors do not override a later valid result.
+edit is Unresolved. A member's outcome reflects its own turn: edits made between
+turns are reviewed by the next member, and only edits after the last member's review
+are unreviewed under the handoff baseline check. Recovered errors do not override a later valid result.
 
 Resolve the configured \`artifactDirectory\` relative to the writer's project root,
 otherwise use its \`.superpowers\` link or stated convention; clarify uncertainty.
@@ -364,7 +369,7 @@ Fill this assignment and include the reply format beneath it in the initial prom
 \`\`\`text
 Role: independent auditor of a specification, implementation plan, or question.
 Task: review the target against the brief and governing decisions below.
-Target: kind, path, current version and contents, or native access to the whole file.
+Target: kind, path, current contents, or native access to the whole file.
 Governing inputs: approved spec/amendments for a plan; brief/decisions for a spec;
 complete presentation, selection behavior and decision context for a question.
 For a spec: agreed short/full size, scope and completeness bar. Short designs use
@@ -654,7 +659,9 @@ Label each revision of the target sent to an auditor v1, v2, … in the conversa
 and report; labels are evidence, not stored state. A member's approval covers only
 the version it reviewed. When a member's turn ends, record its outcome from the
 outcome table below, evaluated for that member's conversation, with the version it
-last reviewed, or "none".
+last reviewed, or "none". Labels stay in the writer's conversation and report; a
+member's prompts identify the target by path and content without its chain label or
+any sign that earlier versions were reviewed.
 
 A tool or model failure (including undelivered or ambiguous delivery that the host
 dispatch reference sends to the human), an unavailable member, or an independence
@@ -677,7 +684,8 @@ The effective chain is each position's final occupant, excluding members the hum
 removed or proceeded past. The approval gates and the handoff baseline evaluate the
 effective chain; a replaced, removed, or proceeded-past member stays in the report
 and status line as a failed attempt with its version. An explicit human cancellation
-stops the whole chain; record later members as not run. A fresh audit, after
+stops the whole chain; record later members as not run. Cancelling at a Failed pause
+records the paused member Failed with its version and runs no later member. A fresh audit, after
 post-chain changes or otherwise, is a new full chain with new sessions and
 per-member budgets.
 
@@ -738,7 +746,7 @@ Use this follow-up prompt, filling each field:
 
 \`\`\`text
 Round: current / maxRounds for this reviewer on this target.
-Target kind/version and governing inputs: paths.
+Target kind, path, what changed since this reviewer's previous round, and governing inputs: paths.
 For a question: current complete presentation, selection behavior, and changed context.
 Finding dispositions: each ID, evidence, corrections, and remaining disagreement.
 Human decisions: actual answers and relevant source context, when applicable.
@@ -797,7 +805,9 @@ member's conversation:
 | Approved | The member accepted the version at its last round and the writer has no remaining blocking objection. |
 
 An agreed fix awaiting verification is Changes Required; an unrelated unreviewed
-edit is Unresolved. Recovered errors do not override a later valid result.
+edit is Unresolved. A member's outcome reflects its own turn: edits made between
+turns are reviewed by the next member, and only edits after the last member's review
+are unreviewed under the handoff baseline check. Recovered errors do not override a later valid result.
 
 Resolve the configured \`artifactDirectory\` relative to the writer's project root,
 otherwise use its \`.superpowers\` link or stated convention; clarify uncertainty.
@@ -857,7 +867,7 @@ Fill this assignment and include the reply format beneath it in the initial prom
 \`\`\`text
 Role: independent auditor of a specification, implementation plan, or question.
 Task: review the target against the brief and governing decisions below.
-Target: kind, path, current version and contents, or native access to the whole file.
+Target: kind, path, current contents, or native access to the whole file.
 Governing inputs: approved spec/amendments for a plan; brief/decisions for a spec;
 complete presentation, selection behavior and decision context for a question.
 For a spec: agreed short/full size, scope and completeness bar. Short designs use

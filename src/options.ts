@@ -15,10 +15,10 @@ export type OptionsResult =
 const author = z.string().regex(/^[^\s/#,=]+\/[^\s#,=]+$/);
 const reviewer = z.string().regex(/^[^\s/#,=]+\/[^\s#,=]+(?:#[^\s#,=]+)?$/);
 // A chain is one reviewer or an ordered list; an exact repeat is rejected.
-const chain = z.union([
-  reviewer.transform(value => [value]),
+const chain = z.preprocess(
+  value => (typeof value === 'string' ? [value] : value),
   z.array(reviewer).min(1),
-]).superRefine((members, ctx) => {
+).superRefine((members, ctx) => {
   const seen = new Set<string>();
   members.forEach((member, index) => {
     if (seen.has(member)) ctx.addIssue({ code: 'custom', path: [index], message: `reviewer "${member}" is listed more than once` });

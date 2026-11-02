@@ -208,6 +208,10 @@ test('renders a configuration error block for invalid options', () => {
   );
 });
 
+test('keeps version labels writer-side', async () => {
+  expect(flat(await sharedBody())).toContain("Labels stay in the writer's conversation and report; a member's prompts identify the target by path and content without its chain label or any sign that earlier versions were reviewed.");
+});
+
 test('OpenCode dispatch starts a fresh session for each reviewer', async () => {
   expect(flat(await openCodeDispatch())).toContain("Omit `sessionID` on each chain member's first call.");
 });

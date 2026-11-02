@@ -67,6 +67,12 @@ test('normalizes every chain to an array in configured order', () => {
   });
 });
 
+test('reports a malformed single string at the first chain position', () => {
+  const result = parseOptions({ reviewers: { 'a/w': 'bad' } });
+  expect(result.ok).toBe(false);
+  if (!result.ok) expect(result.message.split('\n')[0]).toStartWith('reviewers.a/w.0:');
+});
+
 test('names the duplicated reviewer', () => {
   const result = parseOptions({ reviewers: { 'a/w': ['b/r', 'b/r'] } });
   expect(result.ok).toBe(false);

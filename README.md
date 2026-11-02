@@ -88,7 +88,7 @@ match the [Configuration](#configuration) table. Run
 - The writer's `reviewers` key is `anthropic/<base model id>`, with gateway and
   context-window forms such as Bedrock `us.anthropic.…-v1:0`, Vertex `@<date>`, and
   `[1m]` stripped, to match OpenCode's `anthropic/<model>` keys. If your writer IDs
-  normalize differently in the two hosts, add one `reviewers` entry per form.
+  normalize differently in the two hosts, repeat the chain's entries for each writer form.
 
 ## Usage
 
@@ -273,7 +273,8 @@ The native runs below predate the routine-offer and nested-question clarificatio
 
 **Live verification limit:** not exercised live are interactive native question UI,
 question batches and question chains, explicit overrides, a chain in OpenCode, the
-Failed-member pause, report-save failure,
+Failed-member pause, the last member exhausting its budget, question status lines,
+report-save failure,
 routine-offer exemptions, paused enclosing document or question audits,
 compaction recovery, and oversized-context recovery; a round expiring (exit 124 or
 142) under the shipped reference, though expiry, session export, and resend
