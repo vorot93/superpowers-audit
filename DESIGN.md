@@ -35,19 +35,20 @@ prevents manual and automatic audits from diverging.
 
 Specifications, plans and questions share one selection, independence, conversation,
 budget and outcome workflow, with target-specific required inputs and handoffs.
-Question approval permits presenting a decision, not answering it or approving its
+Clean chain approval permits presenting a decision, not answering it or approving its
 design. Reports retain the exact presentation snapshot and review coverage, because
 a mutable working target alone cannot establish which version was reviewed.
 
-Every question owns a fresh audit and budget, even within a native batch. A question
+Every question owns its own chain with per-member budgets, even within a native batch. A question
 needed by a document or question audit may be reviewed while that audit is explicitly
-paused. Calls are serialized; every paused ancestor retains its identity, budget
-and findings. Actual human answers resume the immediate parent before proceeding
+paused. Calls are serialized; every paused ancestor retains its identity, resolved
+chain, the current member's session, model, round count and unresolved findings,
+and completed members' outcomes with versions. Actual human answers resume the immediate parent before proceeding
 outward. Revising a parent question does not create a new target or reset its budget.
 This is writer-owned conversation context, not persistent plugin workflow state.
 
-Question publication requires approval, a saved report and an unchanged outgoing
-presentation. Explicit human per-question overrides are separate records with actual
+Question publication requires clean chain approval, a saved report and an outgoing
+presentation matching the handoff baseline. Explicit human per-question overrides are separate records with actual
 review coverage and any publication failure; they do not manufacture auditor
 approval or authorize later questions. An unchanged report-save retry adds no round
 and changes no outcome. Scope is active brainstorming, including reentry; manual
@@ -81,6 +82,27 @@ rather than prepending or rebuilding it: attachment mention offsets must remain
 valid. Native prompt admission errors propagate without retries because admission
 may be ambiguous.
 
+## Sequential blind chains
+
+One reviewer leaves defects that another model catches, so an audit runs an ordered
+chain of reviewers. The chain is forward-only and blind: each member gets a fresh
+session and the current, already revised target, never earlier members' findings or
+reports, so agreement cannot be inherited and a dispute one member lost cannot
+silently bias the next. Fixes from a later member are not sent back; a fresh audit
+after changes is a new full chain. `maxRounds` bounds each member separately, and an
+exhausted member is never replaced to reset its budget.
+
+Gates evaluate the effective chain: each position's final occupant, excluding
+members the human removed or proceeded past. A chain is cleanly approved when the
+last effective member approved and every earlier non-approving member ended with
+only accepted, applied fixes; an earlier Unresolved dispute prevents it, because
+later members never saw that dispute. Each approval covers the version that member
+reviewed, and handoff compares against the baseline: the version last reviewed by
+the latest member that reviewed anything. Wording a member suggests does not make it
+a drafting contributor for later members of the same chain, only for later audits.
+The chain, like other audit state, is writer-owned conversation context, not plugin
+state.
+
 ## Two validators, one vector set
 
 The configuration contract is validated twice: zod in [`src/options.ts`](src/options.ts)
@@ -90,7 +112,9 @@ block that requests correction instead of falling back to defaults. One vector f
 [`tests/support/config-vectors.ts`](tests/support/config-vectors.ts), drives both
 test suites, and valid vectors must render byte-identical blocks. Claude Code joins
 list options with commas and writes each reviewer entry as `writer=reviewer`, so
-writers and reviewers exclude commas and `=` in both hosts. Error wording is
+writers and reviewers exclude commas and `=` in both hosts. Repeated Claude Code
+entries with the same writer form a chain in entry order, and both hosts render every
+value as a JSON array, including a chain of one. Error wording is
 host-specific; the shared contract is the block shape and the named key.
 
 Whitespace follows ECMAScript's `\s`/`trim` set in both hosts. The C-locale hook

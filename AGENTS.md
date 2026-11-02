@@ -105,7 +105,7 @@ optional and must resolve to that external directory if used.
   name `superpowers-audit:superpowers-audit`; "load the superpowers-audit skill" made
   the model load `superpowers-audit:audit` instead.
 - `userConfig` values reach hooks as `CLAUDE_PLUGIN_OPTION_<KEY uppercased>`: a
-  `multiple` list comma-joined, a number as its decimal string. Unset options are not
+  `multiple` list comma-joined in entry order (repeated `reviewers` writers form a chain), a number as its decimal string. Unset options are not
   exported at all, even with a manifest `default`, so `hooks/audit-context` applies
   defaults. For a `--plugin-dir` probe, pass options with
   `--settings '{"pluginConfigs":{"superpowers-audit@inline":{"options":{…}}}}'`.

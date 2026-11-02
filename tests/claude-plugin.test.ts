@@ -12,6 +12,12 @@ async function skill(path: string) {
   return { frontmatter: parse(frontmatter) as Record<string, unknown>, body };
 }
 
+test('option descriptions explain chains and per-reviewer rounds', async () => {
+  const plugin = await json('.claude-plugin/plugin.json');
+  expect(plugin.userConfig.reviewers.description).toContain('Repeat a writer');
+  expect(plugin.userConfig.maxRounds.description).toContain('per reviewer');
+});
+
 test('manifest matches the package', async () => {
   const plugin = await json('.claude-plugin/plugin.json');
   expect(plugin.name).toBe('superpowers-audit');

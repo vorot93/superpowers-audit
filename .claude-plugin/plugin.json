@@ -12,14 +12,14 @@
       "type": "string",
       "multiple": true,
       "title": "Reviewers",
-      "description": "Reviewer pairings, one per entry, as writer-provider/model=reviewer-provider/model[#variant]."
+      "description": "Reviewer chains, one entry per member, as writer-provider/model=reviewer-provider/model[#variant]. Repeat a writer to add the next reviewer in order."
     },
     "maxRounds": {
       "type": "number",
       "min": 1,
       "default": 5,
       "title": "Maximum audit rounds",
-      "description": "Positive integer limiting the audit rounds per target."
+      "description": "Positive integer limiting the audit rounds per reviewer on each target."
     },
     "artifactDirectory": {
       "type": "string",

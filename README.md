@@ -3,7 +3,7 @@
 Independent review of specifications, implementation plans, and saved questions in
 OpenCode v2 and Claude Code. The plugin adds `/audit`, a shared audit skill, and automatic audit
 stages for Superpowers **7.0.1** brainstorming and writing-plans skills. In both
-hosts, the auditor is OpenCode's `explore` agent on a model you choose.
+hosts, auditors run as OpenCode's `explore` agent on the models you choose, one after another.
 
 > Write → self-review → independent audit → human document review.
 
@@ -58,7 +58,8 @@ The same repository is a Claude Code plugin and a single-plugin marketplace:
 
 Configure reviewers, the round limit, and the artifact directory with
 `/plugin configure` (list options are not `/config` rows). Each `reviewers` entry
-is `writer-provider/model=reviewer-provider/model[#variant]`; the other options
+is `writer-provider/model=reviewer-provider/model[#variant]`. Repeat a writer to
+form an ordered reviewer chain: entries with the same writer run in entry order. The other options
 match the [Configuration](#configuration) table. Run
 `/audit path/to/spec-plan-or-question.md` as described under [Usage](#usage).
 
@@ -96,11 +97,15 @@ Provide confirmed intent, governing decisions and human answers, and known draft
 models; a brief file is optional. A plan also needs its approved specification.
 Missing inputs or an ambiguous path prompt clarification.
 
-Each audit starts a fresh `explore` auditor session (OpenCode's built-in read-only
-exploration agent; it cannot edit files or launch subagents, though read-only is
-still an instruction rather than a sandbox). Follow-ups continue that session and
-model, with a default limit of five calls. The writer reports the actual outcome,
-links the reviewed document and saved report, and asks for the human's decision.
+Each reviewer in the chain, in turn, starts a fresh blind `explore` auditor session
+(OpenCode's built-in read-only exploration agent; it cannot edit files or launch
+subagents, though read-only is still an instruction rather than a sandbox). It
+receives the current, already revised target but not earlier reviewers' findings.
+Follow-ups continue that reviewer's session and model, with its own `maxRounds`
+limit (default five calls). A reviewer's turn ends at approval or exhausted rounds,
+and the chain continues either way. The writer reports each reviewer's outcome with
+the version it reviewed, links the reviewed document and saved report, and asks for
+the human's decision.
 After handoff, direct human edits or changes they request receive self-review and
 a fresh audit.
 
@@ -111,10 +116,11 @@ complete proposed presentation: question/header, ordered choices and description
 surrounding explanation, trade-offs, recommendation, previews, selection behavior,
 and relevant goals, prior answers, sources and drafting contributors. The shared
 workflow stores question evidence in `questions/` and a distinct report in `audits/`.
-Each question has its own fresh independent auditor and round budget, including
-questions in a native batch.
+Each question runs the whole reviewer chain with fresh sessions and per-reviewer
+round budgets, including questions in a native batch.
 
-Present the reviewed version only after approval and a saved report. Changed
+Present the reviewed version only after clean chain approval, a match with the
+reviewed baseline, and a saved report. Changed
 authored fields, selection behavior or context invalidate presentation approval;
 changes after a completed audit require a fresh review. If review cannot finish or
 the report cannot be saved, the writer withholds choices and asks openly for
@@ -133,14 +139,15 @@ while a document or question audit is paused, with serialized calls and distinct
 sessions, budgets and reports. The writer retains every paused parent and resumes
 the immediate parent after obtaining your actual answer, then works outward.
 
-The auditor must differ in **both provider and model family/class** from every
-known drafting contributor and the current writer. Variants, aliases, or gateways
+Every chain member must differ in **both provider and model family/class** from
+every known drafting contributor and the current writer; members may share a vendor
+with each other. Variants, aliases, or gateways
 serving the same underlying vendor/family do not establish independence. Unknown
 authorship or lineage requires clarification, and a writer-model switch triggers
 a new independence check.
 
-Without a reviewer mapping or explicit human selection, the writer asks you to
-select a model. It resolves availability from OpenCode's model catalog: native
+Without a reviewer mapping or explicit human selection, the writer asks you for
+one or more reviewer models in order. It resolves availability from OpenCode's model catalog: native
 `opencode.models` in OpenCode, the `opencode models` command in Claude Code. A model
 named only in a document does not authorize its use.
 
@@ -159,7 +166,7 @@ placeholders; replace them with explicit choices from your OpenCode model catalo
       "package": "github:vorot93/superpowers-audit",
       "options": {
         "reviewers": {
-          "provider/writer-model": "other/reviewer-model#high"
+          "provider/writer-model": ["other/reviewer-model#high", "another/reviewer-model"]
         },
         "maxRounds": 5
       }
@@ -170,8 +177,8 @@ placeholders; replace them with explicit choices from your OpenCode model catalo
 
 | Option | Default | Meaning |
 | --- | --- | --- |
-| `reviewers` | `{}` | User-selected reviewer candidates keyed by drafting `provider/model`, without its variant. Values accept an optional `#variant`; model IDs may contain `/`, but entries cannot contain commas or `=`. Candidates must still satisfy independence and availability checks. |
-| `maxRounds` | `5` | Positive integer per target counting the initial auditor call and every explicit follow-up, including clarifications. Native retries and reading existing replies do not add rounds. |
+| `reviewers` | `{}` | User-selected reviewer chains keyed by drafting `provider/model`, without its variant. Each value is a reviewer string or a non-empty array of them, in chain order; the same reviewer string twice in one chain is rejected. Reviewers accept an optional `#variant`; model IDs may contain `/`, but entries cannot contain commas or `=`. Candidates must still satisfy independence and availability checks. |
+| `maxRounds` | `5` | Positive integer per reviewer per target counting the initial auditor call and every explicit follow-up, including clarifications. Native retries and reading existing replies do not add rounds. |
 | `artifactDirectory` | Project convention | Nonempty path for audit artifacts. Relative paths resolve from the writer's project root; reports go in `audits/` beneath it. When omitted, the writer uses the project's `.superpowers` link or stated convention, asking when unclear. |
 
 Invalid or unknown options produce a visible correction request before dispatch
