@@ -125,7 +125,7 @@ for (const [name, reviewers] of [
     expect(text).toContain('If the writer changes models, recheck both provider and model-family independence\nagainst every known contributor and the new current writer before continuing.');
     expect(text).toContain('A user-requested candidate still has to satisfy both independence checks.');
     for (const [author, candidate] of Object.entries(reviewers)) {
-      expect(text).toContain(`"${author}": "${candidate}"`);
+      expect(text).toContain(`"${author}": [\n          "${candidate}"\n        ]`);
     }
   });
 }

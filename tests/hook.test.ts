@@ -182,6 +182,7 @@ test('oversized configuration returns a complete correction notice', async () =>
   const mappings = Array.from({ length: 100 }, (_, i) => `provider/writer-${i}=other/reviewer-model#high`).join(',');
   const cases: Record<string, string>[] = [
     { CLAUDE_PLUGIN_OPTION_REVIEWERS: mappings },
+    { CLAUDE_PLUGIN_OPTION_REVIEWERS: Array.from({ length: 150 }, (_, i) => `provider/writer=other/reviewer-${i}#high`).join(',') },
     { CLAUDE_PLUGIN_OPTION_REVIEWERS: 'invalid'.repeat(2_000) },
     { CLAUDE_PLUGIN_OPTION_ARTIFACTDIRECTORY: '筆'.repeat(2_000) },
   ];
@@ -205,6 +206,18 @@ test('context budget counts decoded bytes and preserves the exact boundary', asy
   expect(JSON.stringify(context).length).toBeGreaterThan(10_000);
   const oversized = await auditContext({ CLAUDE_PLUGIN_OPTION_ARTIFACTDIRECTORY: directory + 'x' });
   expect(oversized.startsWith('## Audit context unavailable\n')).toBe(true);
+});
+
+test('duplicate reviewer error names the reviewer and writer', async () => {
+  const context = await auditContext({ CLAUDE_PLUGIN_OPTION_REVIEWERS: 'a/w=b/r,a/w=b/r' });
+  expect(blockJson(context, '## Configuration error').message)
+    .toBe('reviewers: reviewer "b/r" is listed more than once for writer "a/w"');
+});
+
+test('a malformed chain member rejects the whole configuration and is named', async () => {
+  const context = await auditContext({ CLAUDE_PLUGIN_OPTION_REVIEWERS: 'a/w=b/r,a/w=bad,a/w=c/r' });
+  expect(blockJson(context, '## Configuration error').message).toContain('"a/w=bad"');
+  expect(context).not.toContain('## Configuration\n');
 });
 
 test('oversized context assets return a notice for each hook event', async () => {

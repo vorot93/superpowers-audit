@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 export interface AuditOptions {
-  reviewers: Record<string, string>;
+  reviewers: Record<string, string[]>;
   maxRounds: number;
   artifactDirectory?: string;
 }
@@ -14,8 +14,19 @@ export type OptionsResult =
 // and writes each reviewers entry as `writer=reviewer`.
 const author = z.string().regex(/^[^\s/#,=]+\/[^\s#,=]+$/);
 const reviewer = z.string().regex(/^[^\s/#,=]+\/[^\s#,=]+(?:#[^\s#,=]+)?$/);
+// A chain is one reviewer or an ordered list; an exact repeat is rejected.
+const chain = z.union([
+  reviewer.transform(value => [value]),
+  z.array(reviewer).min(1),
+]).superRefine((members, ctx) => {
+  const seen = new Set<string>();
+  members.forEach((member, index) => {
+    if (seen.has(member)) ctx.addIssue({ code: 'custom', path: [index], message: `reviewer "${member}" is listed more than once` });
+    seen.add(member);
+  });
+});
 const schema = z.object({
-  reviewers: z.record(author, reviewer).default({}),
+  reviewers: z.record(author, chain).default({}),
   maxRounds: z.number().int().positive().default(5),
   artifactDirectory: z.string().trim().min(1).optional(),
 }).strict();

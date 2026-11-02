@@ -34,7 +34,7 @@ test('retains custom settings and leaves relative artifact paths for the writer'
   })).toEqual({
     ok: true,
     value: {
-      reviewers: { 'gateway/team/writer': 'other/team/reviewer#high' },
+      reviewers: { 'gateway/team/writer': ['other/team/reviewer#high'] },
       maxRounds: 1,
       artifactDirectory: '../project/notes',
     },
@@ -59,4 +59,16 @@ test('returns actionable paths for every configuration issue', () => {
   expect(result.message).toContain('artifactDirectory:');
   expect(result.message).toContain('options:');
   expect(result.message.split('\n')).toHaveLength(3);
+});
+
+test('normalizes every chain to an array in configured order', () => {
+  expect(parseOptions({ reviewers: { 'c/w': 'z/r', 'a/w': ['y/r', 'x/r#high'] } })).toEqual({
+    ok: true, value: { reviewers: { 'c/w': ['z/r'], 'a/w': ['y/r', 'x/r#high'] }, maxRounds: 5 },
+  });
+});
+
+test('names the duplicated reviewer', () => {
+  const result = parseOptions({ reviewers: { 'a/w': ['b/r', 'b/r'] } });
+  expect(result.ok).toBe(false);
+  if (!result.ok) expect(result.message).toContain('listed more than once');
 });

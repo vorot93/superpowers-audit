@@ -115,8 +115,9 @@ emit() {
 # same options. Claude Code exports only the options the user set and joins the
 # reviewers list with commas; each entry splits at its first `=`. Neither
 # character may appear in a writer or reviewer, so no entry is ambiguous. The
-# rules mirror src/options.ts and are tested against the same vectors. An empty
-# reviewers list has no entries.
+# rules mirror src/options.ts and are tested against the same vectors. Repeated
+# writers form a chain: members and writers keep entry order, and an exact
+# repeat of a writer's reviewer is an error. An empty reviewers list has no entries.
 configuration() {
   awk "$escape_function"'
     function fail(message) { errors = errors (errors == "" ? "" : "\n") message }
@@ -135,13 +136,16 @@ configuration() {
         reviewer = substr(entries[i], separator + 1)
         if (separator == 0 || writer !~ writer_pattern || reviewer !~ reviewer_pattern || writer ~ whitespace || reviewer ~ whitespace)
           fail("reviewers: entry \"" entries[i] "\" is not writer-provider/model=reviewer-provider/model[#variant]")
-        else if (writer in seen)
-          fail("reviewers: writer \"" writer "\" is mapped more than once")
+        else if ((writer SUBSEP reviewer) in seen)
+          fail("reviewers: reviewer \"" reviewer "\" is listed more than once for writer \"" writer "\"")
         else {
-          seen[writer] = 1
-          pairs = pairs (pairs == "" ? "" : ",\n") "        \"" escape(writer) "\": \"" escape(reviewer) "\""
+          seen[writer, reviewer] = 1
+          if (!(writer in members)) { order[++writers] = writer; members[writer] = "" }
+          members[writer] = members[writer] (members[writer] == "" ? "" : ",\n") "          \"" escape(reviewer) "\""
         }
       }
+      for (i = 1; i <= writers; i++)
+        pairs = pairs (pairs == "" ? "" : ",\n") "        \"" escape(order[i]) "\": [\n" members[order[i]] "\n        ]"
 
       rounds = "5"
       if ("CLAUDE_PLUGIN_OPTION_MAXROUNDS" in ENVIRON) rounds = ENVIRON["CLAUDE_PLUGIN_OPTION_MAXROUNDS"]

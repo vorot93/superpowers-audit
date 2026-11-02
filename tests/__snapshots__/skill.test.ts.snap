@@ -712,7 +712,9 @@ review, including surrounding explanation and recommendation.
 
     {
       "reviewers": {
-        "gateway/team/writer": "other/reviewer#high"
+        "gateway/team/writer": [
+          "other/reviewer#high"
+        ]
       },
       "maxRounds": 3,
       "artifactDirectory": "../audit-notes"
