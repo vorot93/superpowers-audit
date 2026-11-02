@@ -41,7 +41,7 @@ Also review every **Lay out the approaches** presentation before showing it,
 including one viable approach with reasons alternatives were ruled out.
 Follow the shared skill's question workflow for self-review, saved presentation,
 independent review, report, version matching, and explicit per-question overrides.
-Question approval permits presentation, not an answer or design approval.
+Clean chain approval of a question permits presentation, not an answer or design approval.
 
 Keep open questions and ordinary single recommendations or size suggestions;
 they need no question audit unless they compare alternatives or are the mandatory
@@ -286,17 +286,17 @@ self-review. Supply the written design, agreed short/full size and completeness 
 confirmed conversational intent/decisions and human answers (in a brief if available),
 and known drafting models; remain in this writer session.
 Complete its discussion and report before human handoff.
-Present a non-approved result and ask for direction; preserve the actual result
+Present a result that is not cleanly approved and ask for direction; preserve the actual result
 if the human proceeds. Audit questions about material decisions still go to the human;
 the builder check's one question round does not waive that requirement.
 
 ## Human Document Review
 
 For either design size, hand over the current design and audit report,
-state the actual outcome, and include a short list of calls you made so the human
+state each reviewer's actual outcome and reviewed version, and include a short list of calls you made so the human
 can check those while reading:
 
-> "Spec: `<spec path>`. Audit: <actual outcome>; report: `<report path>`. My calls: <short list>. Please review the full document and report. Do you approve this design for planning?"
+> "Spec: `<spec path>`. Audit: <each reviewer's outcome and reviewed version>; report: `<report path>`. My calls: <short list>. Please review the full document and report. Do you approve this design for planning?"
 
 Wait for the human's decision. After handoff, for direct human edits or changes they request,
 rerun self-review and a fresh audit before renewed handoff. Only proceed to

@@ -11,11 +11,11 @@ export interface SkillAdaptation {
 export const supportedHashes: Record<SupportedSkill, { baseline: string; transformed: string }> = {
   brainstorming: {
     baseline: '8e43c8181a17642ac8c8b6e1c3fa29294ef5d3fa64f67eaa917ff709298a0b96',
-    transformed: '621f59c0cf5d19780447e0d40d3eeeefda4394a69bcad24d7cb7187eb9b75288',
+    transformed: 'ade3e421585aca21862bb194a762f9e498e042b281e4b43346b1351c2919fb10',
   },
   'writing-plans': {
     baseline: '1fa01b954171b1d2b8bc0208dfbc6a01edf8a2ca715d18f76f043952e37e744f',
-    transformed: 'b69c375817015fb0c382f7b5e2c2514f9974947cebafc5bfd8b4b1373ae8df65',
+    transformed: '84a97e2cb323c77f375a34af30314ba29d33da414714ec205362983106babc80',
   },
 };
 
@@ -36,7 +36,7 @@ const edits: Record<SupportedSkill, readonly (readonly [string, string])[]> = {
         + 'including one viable approach with reasons alternatives were ruled out.\n'
         + "Follow the shared skill's question workflow for self-review, saved presentation,\n"
         + 'independent review, report, version matching, and explicit per-question overrides.\n'
-        + 'Question approval permits presentation, not an answer or design approval.\n\n'
+        + 'Clean chain approval of a question permits presentation, not an answer or design approval.\n\n'
         + 'Keep open questions and ordinary single recommendations or size suggestions;\n'
         + 'they need no question audit unless they compare alternatives or are the mandatory\n'
         + 'approaches presentation. The upstream one-line opt-out offer and ordinary yes/no\n'
@@ -102,14 +102,14 @@ const edits: Record<SupportedSkill, readonly (readonly [string, string])[]> = {
         + 'confirmed conversational intent/decisions and human answers (in a brief if available),\n'
         + 'and known drafting models; remain in this writer session.\n'
         + 'Complete its discussion and report before human handoff.\n'
-        + 'Present a non-approved result and ask for direction; preserve the actual result\n'
+        + 'Present a result that is not cleanly approved and ask for direction; preserve the actual result\n'
         + 'if the human proceeds. Audit questions about material decisions still go to the human;\n'
         + "the builder check's one question round does not waive that requirement.\n\n"
         + '## Human Document Review\n\n'
         + 'For either design size, hand over the current design and audit report,\n'
-        + 'state the actual outcome, and include a short list of calls you made so the human\n'
+        + 'state each reviewer\'s actual outcome and reviewed version, and include a short list of calls you made so the human\n'
         + 'can check those while reading:\n\n'
-        + '> "Spec: `<spec path>`. Audit: <actual outcome>; report: `<report path>`. My calls: <short list>. Please review the full document and report. Do you approve this design for planning?"\n\n'
+        + '> "Spec: `<spec path>`. Audit: <each reviewer\'s outcome and reviewed version>; report: `<report path>`. My calls: <short list>. Please review the full document and report. Do you approve this design for planning?"\n\n'
         + "Wait for the human's decision. After handoff, for direct human edits or changes they request,\n"
         + 'rerun self-review and a fresh audit before renewed handoff. Only proceed to\n'
         + 'planning once the human approves the current written design.\n\n'
@@ -134,21 +134,21 @@ const edits: Record<SupportedSkill, readonly (readonly [string, string])[]> = {
         + 'After completing self-review, load the native `superpowers-audit` skill. Supply\n'
         + 'the plan, approved governing spec/amendments, relevant decisions, and known drafting models.\n'
         + 'Run its conversation in this writer session and write its report before handoff.\n'
-        + 'Present the actual outcome and ask for direction when it is not Approved.\n\n'
+        + 'Present each reviewer\'s actual outcome and ask for direction when the chain is not cleanly approved.\n\n'
         + '## Execution Handoff',
     ],
     [
       'After saving and self-reviewing the plan, link it for your human partner\nto read.',
       'After saving, self-reviewing, and auditing the plan, link the current plan\n'
-        + 'and audit report and state the actual outcome for your human partner.',
+        + 'and audit report and state each reviewer\'s actual outcome for your human partner.',
     ],
     [
       '**"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Please review the plan. Which execution approach would you prefer?**',
-      '**"Plan: `<plan path>`. Audit: <actual outcome>; report: `<report path>`. Please review both. Which execution approach would you prefer?**',
+      '**"Plan: `<plan path>`. Audit: <each reviewer\'s outcome and reviewed version>; report: `<report path>`. Please review both. Which execution approach would you prefer?**',
     ],
     [
       '**"Plan complete and saved to `docs/superpowers/plans/<filename>.md`. Please review the plan. Does it capture what you want?"**',
-      '**"Plan: `<plan path>`. Audit: <actual outcome>; report: `<report path>`. Please review both. Does the plan capture what you want?"**',
+      '**"Plan: `<plan path>`. Audit: <each reviewer\'s outcome and reviewed version>; report: `<report path>`. Please review both. Does the plan capture what you want?"**',
     ],
     [
       '## Execution Handoff',

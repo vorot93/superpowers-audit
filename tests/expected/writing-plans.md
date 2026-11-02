@@ -177,7 +177,7 @@ If you find issues, fix them inline. If you find a spec requirement with no task
 After completing self-review, load the native `superpowers-audit` skill. Supply
 the plan, approved governing spec/amendments, relevant decisions, and known drafting models.
 Run its conversation in this writer session and write its report before handoff.
-Present the actual outcome and ask for direction when it is not Approved.
+Present each reviewer's actual outcome and ask for direction when the chain is not cleanly approved.
 
 ## Execution Handoff
 
@@ -186,14 +186,14 @@ a fresh audit before renewed handoff. Preserve an already selected execution
 method and wait for approval of the revised plan.
 
 After saving, self-reviewing, and auditing the plan, link the current plan
-and audit report and state the actual outcome for your human partner. If they have already explicitly supplied an execution method, ask
+and audit report and state each reviewer's actual outcome for your human partner. If they have already explicitly supplied an execution method, ask
 them to review the plan and confirm it captures what they want; wait for that
 review before implementation, then use the preserved method. Otherwise, ask
 them to review the plan and choose an execution method before implementation.
 
 **When no execution method has already been supplied:**
 
-**"Plan: `<plan path>`. Audit: <actual outcome>; report: `<report path>`. Please review both. Which execution approach would you prefer?**
+**"Plan: `<plan path>`. Audit: <each reviewer's outcome and reviewed version>; report: `<report path>`. Please review both. Which execution approach would you prefer?**
 
 - **Subagent-driven** - A fresh subagent implements each task and a fresh reviewer checks it before the next one starts, then a whole-branch review at the end. Most thorough; costs a fresh context per task and per review.
 - **Native** - I implement every task myself in this session, the way this harness runs work, then one fresh reviewer on the most capable model checks the whole branch. Cheapest and fastest; no independent review until the end. Runs well with a mid-tier session model, since the plan carries the design.
@@ -202,7 +202,7 @@ them to review the plan and choose an execution method before implementation.
 
 **When an execution method has already been supplied:**
 
-**"Plan: `<plan path>`. Audit: <actual outcome>; report: `<report path>`. Please review both. Does the plan capture what you want?"**
+**"Plan: `<plan path>`. Audit: <each reviewer's outcome and reviewed version>; report: `<report path>`. Please review both. Does the plan capture what you want?"**
 
 **If Subagent-driven chosen:**
 - **REQUIRED SUB-SKILL:** Use superpowers:subagent-driven-development

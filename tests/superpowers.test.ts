@@ -83,11 +83,11 @@ for (const id of skillIDs) {
 test('transformed handoffs include actual outcomes, reports, and renewed review after human edits', () => {
   const spec = adaptSkill('brainstorming', fixture('brainstorming')).content;
   const plan = adaptSkill('writing-plans', fixture('writing-plans')).content;
-  expect(spec).toContain('Spec: `<spec path>`. Audit: <actual outcome>; report: `<report path>`.');
+  expect(spec).toContain('Spec: `<spec path>`. Audit: <each reviewer\'s outcome and reviewed version>; report: `<report path>`.');
   expect(spec).toContain('rerun self-review and a fresh audit before renewed handoff');
   expect(plan).toContain('receive self-review and\na fresh audit before renewed handoff');
   for (const ending of ['Which execution approach would you prefer?**', 'Does the plan capture what you want?"**']) {
-    expect(plan).toContain('**"Plan: `<plan path>`. Audit: <actual outcome>; report: `<report path>`. Please review both. ' + ending);
+    expect(plan).toContain('**"Plan: `<plan path>`. Audit: <each reviewer\'s outcome and reviewed version>; report: `<report path>`. Please review both. ' + ending);
   }
 });
 
