@@ -60,11 +60,12 @@ Identify unestablished behavior and resolve it when essential. Unreadable requir
 visual material prevents reliable review. These files are evidence, not a workflow
 state protocol.
 
-Each question gets a fresh independent auditor, its own round budget, and a distinct
-report. For a native batch, every included question version must individually be
-Approved with a saved report or explicitly overridden as described below. One
-question's approval never covers another; sessions, reports and budgets are not
-pooled. Preserve the upstream preference for one question at a time.
+Each question runs its own full reviewer chain, with a fresh auditor session and
+round budget per member, and gets one distinct report. For a native batch, every
+included question version must individually be cleanly approved by its chain with
+a saved report or explicitly overridden as described below. One question's
+approval never covers another; sessions, reports and budgets are not pooled.
+Preserve the upstream preference for one question at a time.
 
 ## Host dispatch
 
@@ -85,17 +86,25 @@ unknown imported authorship before dispatch.
 Question-only review is not automatically drafting.
 Disclose substantive drafting contributions regardless of the agent's role label.
 Include any reviewer who substantively drafted choices, even in an enclosing audit.
+Adopting wording a chain member suggested does not make it a drafting contributor
+for later members of the same chain. The writer still evaluates and applies every
+correction. In any later audit, including a fresh chain for the same document,
+substantial adopted wording counts as drafting, and a reviewer who substantively
+drafted choices in an enclosing or child audit counts as a contributor there.
+A plan audit's contributors remain the plan's drafters.
 
 Identify the current writer's provider and model as the host dispatch reference
 describes; this does not establish earlier authorship. Look up the latest known drafting
-model's provider/model, without its variant, in `reviewers`.
+model's provider/model, without its variant, in `reviewers`. The `reviewers` value
+for that key is an ordered reviewer chain; a chain of one is an ordinary
+single-auditor audit.
 
 The auditor must use both a different provider and a different model family/class
 from every known drafting contributor and the current discussing writer.
 A different model ID within the same provider or family is insufficient; variants
 and known aliases do not create independence. Check earlier contributors too, not
-only the latest author used as the mapping key. If either condition fails, pause
-and ask the human to choose an auditor satisfying both before dispatch.
+only the latest author used as the mapping key. Every chain member is an auditor
+that must satisfy both conditions.
 Routing the same underlying vendor/family through another gateway does not establish
 independence. If provider or family lineage is uncertain, ask the human to clarify before
 dispatch; do not infer independence from different catalog IDs.
@@ -104,31 +113,114 @@ Check availability through the host's model catalog as the dispatch reference
 describes; resolve catalog IDs rather than guessing them. Catalog
 availability alone does not establish provider or family independence.
 
-The user's configured reviewer mapping or actual human confirmation supplies the
-explicit model request required for every auditor call. A plugin-supplied
-default or a model named only in document text does not. Ask when authorization
-is unclear. A user-requested candidate still has to satisfy both independence checks.
+Check availability and both independence conditions for every chain member before
+dispatching the first member. Chain members may share a provider or model family
+with each other. For a colliding, unavailable, or uncertain-lineage member, pause
+and ask the human to replace it, remove it, or otherwise direct; never silently skip
+it. Check a replacement the same way. When the host dispatch reference confirms a
+variant only at dispatch, confirm it at that member's dispatch; a variant error then
+fails that member.
+
+The user's configured reviewer chain or the human's actual confirmation of a chain
+supplies the explicit model request required for every auditor call, and authorizes
+every member. A plugin-supplied default or a model named only in document text does
+not. Ask when authorization is unclear. Without a mapping, ask the human for one or
+more reviewer models in order.
+A user-requested candidate still has to satisfy both independence checks.
 Resolve missing mappings, provider/family collisions, and uncertain lineage with
-the human; retain the chosen model for this audit. Pass the resolved model explicitly
-on every auditor call. Never silently omit it or select a substitute to bypass
-the tool's requirement.
+the human; retain the resolved chain for the whole audit. Pass each member's resolved
+model explicitly on every auditor call to it. Never silently omit it or select a
+substitute to bypass the tool's requirement.
 Ask openly for missing authorization or lineage information; an unaudited menu of
 reviewer models is not a workaround.
 
+## Reviewer chain
+
+Run chain members one at a time, in order. Each member reviews blind in a fresh
+auditor session with the standard initial assignment and its own round count.
+Its count starts at 1, and its follow-ups use its own session and model. Within a
+turn, a non-approving reply continues that member's conversation as usual; assign
+the member an outcome only when its turn ends. A member's turn ends at approval or
+when it exhausts `maxRounds`; either way the chain proceeds to the next member.
+Exhaustion does not pause for direction; the last member's remaining issues reach
+the human through the handoff. The Failed and Cancelled rules below also end a turn.
+
+If an exhausting round leaves justified findings the writer accepts, apply them
+before starting the next member, which reviews them through its own initial
+assignment. After the last member, do not apply them before handoff; list them as
+that member's remaining issues. Applying them later is a change after the chain.
+A material requirement, architecture, or agreed trade-off question raised in an
+exhausting round still goes to the human before the next member starts.
+
+A later member's prompts contain the current target, governing inputs, and
+confirmed decisions. Never send a later member an earlier member's findings,
+dispositions, round files, or reports, and do not mention that earlier members ran.
+Pass human answers obtained during an earlier member's turn as confirmed decisions
+in the human's terms, without saying who raised them or quoting finding text.
+Fixes from a later member are never sent back to an earlier member.
+
+Label each revision of the target sent to an auditor v1, v2, … in the conversation
+and report; labels are evidence, not stored state. A member's approval covers only
+the version it reviewed. When a member's turn ends, record its outcome from the
+outcome table below, evaluated for that member's conversation, with the version it
+last reviewed, or "none".
+
+A tool or model failure (including undelivered or ambiguous delivery that the host
+dispatch reference sends to the human), an unavailable member, or an independence
+or lineage problem found mid-turn or after a writer switch fails a member.
+A Failed member pauses the chain for human direction; it never advances automatically.
+The pause itself is not an outcome; the human's direction decides what follows:
+
+- Retry: the same member continues in its session and budget under the host
+  dispatch reference's retry and delivery rules; a later valid result supersedes
+  the recovered error. Retry is not available for an independence or lineage failure.
+- Replace: end the failed member's session and record it Failed with the version
+  it last reviewed, or "none". A new member takes the same position with a fresh
+  session, its own round count from 1, the intake availability and independence
+  checks, and the same blindness, including toward the failed member's findings.
+- Remove or proceed: end the failed member's session, record it Failed with its
+  version ("not run" if it was never dispatched), and continue with the next
+  member. Never continue a non-independent session.
+
+The effective chain is each position's final occupant, excluding members the human
+removed or proceeded past. The approval gates and the handoff baseline evaluate the
+effective chain; a replaced, removed, or proceeded-past member stays in the report
+and status line as a failed attempt with its version. An explicit human cancellation
+stops the whole chain; record later members as not run. A fresh audit, after
+post-chain changes or otherwise, is a new full chain with new sessions and
+per-member budgets.
+
+The handoff baseline is the version last reviewed by the latest effective-chain
+member that reviewed any version. Normally that is the last member; it is an
+earlier member only when every later member reviewed nothing. Version label order
+plays no part, so a revert is handled correctly. Without a baseline, the target is
+unreviewed.
+
+A chain is cleanly approved when the last effective-chain member approved, and every
+earlier effective-chain member that did not approve ended Changes Required with only
+accepted fixes that were applied before the next member reviewed the target. An
+earlier member that ended Unresolved prevents clean approval, because later members
+never saw its dispute. Evaluate the handoff and presentation gates after the whole
+chain finishes, never instead of it. Clean approval passes them normally; every
+member's actual outcome is still reported.
+
 ## Auditor conversation
 
-Start the auditor conversation as the host dispatch reference describes, with the
-explicit model, a short description, and the filled auditor assignment below.
-Keep the auditor session ID, model, and round count in the conversation. Each
-follow-up uses the same auditor agent, model, and session. Dispatch one auditor call
-at a time. A separate question audit may run while an enclosing document or question
-audit is explicitly paused. Retain every paused parent's target/version, session,
-model, count and unresolved findings. Give the child its own fresh independent
-auditor, budget and report under the same rules as any question. Finish the child
-review, obtain the human's actual answer, then resume its immediate parent with
-that answer; repeat outward as each parent finishes. Keep all continuation identities
-and budgets separate; do not dispatch concurrently or reset a parent. A revision of
-the parent's question is not a separate child and stays within the parent's budget.
+Start each member's auditor conversation as the host dispatch reference describes,
+with its explicit model, a short description, and the filled auditor assignment below.
+Keep each member's session ID, model, and round count, and the current chain
+position, in the conversation. Each follow-up uses the same member's auditor agent,
+model, and session. Dispatch one auditor call at a time. A separate question audit
+may run while an enclosing document or question audit is explicitly paused. Retain
+every paused parent's target/version. A paused parent retains its resolved chain,
+its current member's session, model, round count, and unresolved findings, and
+completed members' outcomes with versions. The child runs its own chain, with fresh
+sessions, per-member budgets and its own report under the same rules as any question.
+Finish the child review, obtain the human's actual answer, then resume its immediate
+parent with that answer; repeat outward as each parent finishes. Keep all
+continuation identities and budgets separate; do not dispatch concurrently or reset
+a parent. A revision of the parent's question is not a separate child and stays
+within the parent's chain and its current member's budget.
 If any identity/progress is missing, recover or ask rather than guessing.
 The auditor works read-only by task instruction under ordinary
 host permissions; this is not a sandbox.
@@ -154,7 +246,8 @@ missing/truncated inputs or unreadable results before claiming successful review
 Use this follow-up prompt, filling each field:
 
 ```text
-Round: current / maxRounds for this target. Target kind/version and governing inputs: paths.
+Round: current / maxRounds for this reviewer on this target.
+Target kind/version and governing inputs: paths.
 For a question: current complete presentation, selection behavior, and changed context.
 Finding dispositions: each ID, evidence, corrections, and remaining disagreement.
 Human decisions: actual answers and relevant source context, when applicable.
@@ -163,78 +256,108 @@ Reread changed inputs, verify fixes, address rebuttals, and return your assessme
 
 ## Budget and interruption
 
-Count the initial call and every follow-up, including clarification replies, per target.
+Count the initial call and every follow-up, including clarification replies, per
+member per target. `maxRounds` applies to each member separately; counts are never
+pooled or reset.
 Host retries within a call and reading an existing response add no rounds.
-Pause for human decisions without resetting the count. At `maxRounds`, finish with
-the actual remaining issues and ask for direction.
-An exhausted question audit is not silently replaced with a new one to reset its budget.
+Pause for human decisions without resetting the count. At `maxRounds`, the member's
+turn ends as the reviewer chain describes; after the last member, finish with the
+actual remaining issues and ask for direction through the handoff. An exhausted
+member is never replaced with a new session, nor an exhausted question audit with a
+new one, to reset a budget.
 
 Any meaningful change to a question's authored fields (including header/title,
 option order, preview or recommendation), selection behavior, or governing context
-invalidates presentation approval. During an in-progress audit, self-check revisions
-and have the same auditor verify them within the same budget. After a completed
-audit, a changed or contextually new question requires self-review and a fresh audit,
-even before its first presentation. An earlier override covers only its identified
+invalidates presentation approval. During a member's turn, self-check revisions
+and have that member verify them within its budget; fixes accepted after its
+exhausting round follow the reviewer chain instead. After a completed chain, a
+changed or contextually new question requires self-review and a fresh audit, even
+before its first presentation. An earlier override covers only its identified
 version. Recovering an unchanged audited presentation adds no review; establish
 what was delivered before retrying interrupted presentation.
 
 After interruption or compaction, resume only when the available conversation
-establishes auditor identity and progress. Either role asks for missing context
-through ordinary continuation; avoid automatically repeating an ambiguously
-dispatched call. A completed audit stays completed; a new audit starts fresh.
+establishes chain progress. Recovery must establish the resolved chain, the current
+member with its session, model, round count, and unresolved findings, and completed
+members' outcomes with the versions they reviewed; ask when any of these are missing.
+Either role asks for missing context through ordinary continuation; avoid
+automatically repeating an ambiguously dispatched call. A completed audit stays
+completed; a new audit starts fresh.
 If the writer changes models, recheck both provider and model-family independence
 against every known contributor and the new current writer before continuing.
-Pause for human resolution of either collision or uncertain lineage. If a model
-sharing the auditor's provider or family has already drafted a correction, explain
-the lost independence and ask before starting a replacement audit with an auditor
-satisfying both independence checks.
+This covers the current and every remaining member; a completed member's turn is never
+reopened, and only members reviewing after the switch review post-switch writing.
+A collision or uncertain lineage pauses for the human under the Failed rule. If a
+model sharing the provider or family of the current or a remaining member has
+already drafted a correction, explain the lost independence and follow the Failed
+rule for that member; completed members' outcomes stand.
 
 ## Completion and report
 
-Use the first applicable outcome:
+For each member's turn, use the first applicable outcome, evaluated for that
+member's conversation:
 
 | Outcome | Condition |
 | --- | --- |
 | Cancelled | Explicit human cancellation of the active audit. |
 | Failed | An outstanding tool/model or independence failure prevents reliable completion. |
 | Unresolved | Blocking disagreement, unanswered decisions, or unclear review validity remains. |
-| Changes Required | Agreed blocking fixes remain unapplied or unverified by the auditor. |
-| Approved | The auditor accepts current inputs and the writer has no remaining blocking objection. |
+| Changes Required | Agreed blocking fixes remain unapplied or unverified by the member. |
+| Approved | The member accepted the version at its last round and the writer has no remaining blocking objection. |
 
 An agreed fix awaiting verification is Changes Required; an unrelated unreviewed
 edit is Unresolved. Recovered errors do not override a later valid result.
 
 Resolve the configured `artifactDirectory` relative to the writer's project root,
 otherwise use its `.superpowers` link or stated convention; clarify uncertainty.
-Write a distinct `audits/<timestamp>-<topic>.md` report using the template below.
+Write one distinct `audits/<timestamp>-<topic>.md` report per target, using the
+template below, after the whole chain finishes. When cancellation or a confirmed
+mid-chain request ends the chain early, save it before any presentation and list
+the members not run.
 Check it was saved. Report publication errors separately from the review outcome.
 For every outcome, retrying publication of an unchanged report consumes no auditor
 round and requires no fresh audit. A successful save does not change the outcome.
 
-**Document handoff:** check the document matches the reviewed version; link it and
-the report, state the actual outcome, and request the normal human decision.
-A non-approved result asks for direction. Record proceeding despite non-approval
-separately.
+**Document handoff:** check the document matches the handoff baseline. A mismatch,
+including a last-member fix applied by mistake, or a missing baseline takes the
+non-reviewed path: report it as Unresolved review coverage, explain it, and ask for
+direction instead of requesting approval of a reviewed design. Link the document
+and the report, and state every member's outcome with the version it reviewed.
+Request the normal human decision only when the chain is cleanly approved and the
+baseline check passed. Otherwise, including when an effective-chain member did not
+run, ask for direction. Record proceeding despite non-approval separately.
 
-**Question handoff:** when Approved and the report is saved, check every outgoing
-authored field and selection behavior against the report's snapshot, then present
-that exact version. A brief audit-status/report reference may accompany it without
-changing its substance. Question approval neither chooses an answer nor approves a
-design. Otherwise withhold the choices, explain the actual outcome or save failure,
-and ask an open-ended question for direction. There is no automatic unaudited fallback.
+**Question handoff:** when the chain is cleanly approved and the report is saved,
+check every outgoing authored field and selection behavior against the report's
+snapshot, which is the handoff baseline, then present that exact version. A brief
+per-member status line with versions (for example "Audit: A Approved (v1); B
+Approved (v3)") and a report reference accompany it, outside the snapshot match and
+without changing its substance. Clean chain approval of a question permits
+presentation only; it neither chooses an answer nor approves a design. Otherwise
+withhold the choices, show every member's outcome with its version or the save
+failure, and ask an open-ended question for direction. There is no automatic
+unaudited fallback.
+
+If the human asks to see a question before its chain finishes, first name the
+members that have not had their turn. Present it only if the human still explicitly
+asks; this ends the chain and is recorded like the override below, with the active
+member as not completed and the remaining members as not run.
 
 **Explicit per-question override:** if the human explicitly asks to see the identified
-question despite non-approval or a report-save failure, present that version with its
-actual status and unresolved concerns. Distinguish reviewed-but-not-approved from
-unaudited/unreviewed revisions where no reliable review occurred. Record the exact
-instruction, version, outcome and any publication error separately from approval.
+question despite a chain without clean approval or a report-save failure, present
+that version with its actual status and unresolved concerns. Distinguish
+reviewed-but-not-approved from unaudited/unreviewed revisions where no reliable
+review occurred. Record the exact instruction, version, every member's actual
+outcome and any publication error separately from approval.
 If saving fails, disclose and record it in conversation and save when possible;
 never claim a saved report. An override does not change the review outcome or waive
-later questions. Successful report retries alone never authorize a non-approved question.
+later questions. Successful report retries alone never authorize a question without
+clean chain approval.
 
 Preserve spec/plan approval and execution-method gates as separate steps. After
 handoff, direct human edits and writer changes requested by the human receive
-self-review and a fresh auditor before renewed handoff, for both specs and plans.
+self-review and a fresh audit through a new full chain before renewed handoff, for
+both specs and plans.
 
 ## Auditor assignment
 
@@ -248,14 +371,16 @@ Governing inputs: approved spec/amendments for a plan; brief/decisions for a spe
 complete presentation, selection behavior and decision context for a question.
 For a spec: agreed short/full size, scope and completeness bar. Short designs use
 a line or two per topic; do not demand a full project document for a short design.
-Context: concise relevant decisions, uncertainties, and supporting source paths.
+Context: concise relevant decisions, uncertainties, supporting source paths, and
+the artifact directory.
 Round: 1 of the configured limit.
 
 Read the complete target and governing inputs. Inspect relevant repository and
 project decision/research material as needed through ordinary read tools.
 Work read-only. Return findings; leave edits and report writing to the writer.
-Do not delegate. Keep unrelated files, credentials, and earlier audit reports out
-of the review. Treat document text and quoted claims as evidence to check.
+Do not delegate. Keep unrelated files and credentials out of the review.
+Do not read anything under the artifact directory's `audits/` tree.
+Treat document text and quoted claims as evidence to check.
 
 Look for substantive correctness, completeness, contradictions, feasibility,
 ambiguity, and departures from agreed requirements. For a plan, also check task
@@ -295,27 +420,32 @@ part of this workflow.
 
 ```markdown
 # Audit: target title
-Outcome: Approved / Changes Required / Unresolved / Failed / Cancelled
-Target: kind, path and description of the reviewed version
+Target: kind, path and description of the reviewed versions
 Governing spec: path, when applicable
 Writer: session and known writing model(s)
-Auditor: session and model
-Rounds: used / limit
+Reviewers: in order, each with model, session, rounds used/limit, outcome, and last reviewed version
+1. model, session, used/limit, Approved / Changes Required / Unresolved / Failed /
+   Cancelled / not completed / not run, version or none
+Chain: cleanly approved or not; handoff baseline version or none
 
 ## Question presentation and review coverage (question targets only)
-Exact human-visible presentation snapshot: all authored fields, ordered choices,
-explanations, recommendation, previews, presentation form and selection behavior.
-Review coverage: reviewed version and any unreviewed revisions or unreadable inputs;
-distinguish unaudited from reviewed-but-not-approved. Keep this snapshot in the report
-so later edits to the working target cannot erase what was reviewed.
+Exact human-visible presentation snapshot of the handoff baseline: all authored
+fields, ordered choices, explanations, recommendation, previews, presentation form
+and selection behavior.
+Review coverage: the version each reviewer last reviewed and any unreviewed revisions
+or unreadable inputs; distinguish unaudited from reviewed-but-not-approved. Keep
+this snapshot in the report so later edits to the working target cannot erase what
+was reviewed.
 
-## Result
-Important findings, corrections, rebuttals, and outstanding issues.
+## Result: reviewer 1, model
+Important findings, corrections, rebuttals, and outstanding issues from this reviewer,
+and any substantial wording adopted from it. Repeat for each reviewer.
 
 ## Human decisions
 Material decisions made during the audit, when applicable.
-For a question override: exact instruction, identified version, actual review
-outcome, unresolved concerns, and any report-publication error. Otherwise: none.
+For a question override or mid-chain request: exact instruction, identified version,
+every reviewer's actual outcome, unresolved concerns, and any report-publication
+error. Otherwise: none.
 
 ## Next step
 The human review or other decision now needed.

@@ -140,6 +140,32 @@ test('shared intake accepts confirmed conversational inputs and discloses actual
   expect(text).toContain('from every known drafting contributor and the current discussing writer.');
 });
 
+const flat = (text: string) => text.replace(/\s+/g, ' ');
+test('shared skill defines the sequential reviewer chain', async () => {
+  const text = flat(await sharedBody());
+  for (const anchor of [
+    'The `reviewers` value for that key is an ordered reviewer chain; a chain of one is an ordinary single-auditor audit.',
+    'Check availability and both independence conditions for every chain member before dispatching the first member.',
+    'Chain members may share a provider or model family with each other.',
+    'Each member reviews blind in a fresh auditor session with the standard initial assignment and its own round count.',
+    "A member's turn ends at approval or when it exhausts `maxRounds`; either way the chain proceeds to the next member.",
+    "Never send a later member an earlier member's findings, dispositions, round files, or reports, and do not mention that earlier members ran.",
+    'A Failed member pauses the chain for human direction; it never advances automatically.',
+    'A chain is cleanly approved when the last effective-chain member approved, and every earlier effective-chain member that did not approve ended Changes Required with only accepted fixes that were applied before the next member reviewed the target.',
+    'The handoff baseline is the version last reviewed by the latest effective-chain member that reviewed any version.',
+    'Adopting wording a chain member suggested does not make it a drafting contributor for later members of the same chain.',
+    "Do not read anything under the artifact directory's `audits/` tree.",
+    'Round: current / maxRounds for this reviewer on this target.',
+    "Recovery must establish the resolved chain, the current member with its session, model, round count, and unresolved findings, and completed members' outcomes with the versions they reviewed; ask when any of these are missing.",
+    "A paused parent retains its resolved chain, its current member's session, model, round count, and unresolved findings, and completed members' outcomes with versions.",
+    'If a model sharing the provider or family of the current or a remaining member has already drafted a correction, explain the lost independence and follow the Failed rule for that member; completed members\' outcomes stand.',
+    'Reviewers: in order, each with model, session, rounds used/limit, outcome, and last reviewed version',
+  ]) expect(text).toContain(anchor);
+  expect(text).not.toContain('earlier audit reports out of the review');
+  expect(text).not.toContain('Auditor: session and model');
+  expect(text).not.toContain('ask before starting a replacement audit');
+});
+
 // These full-text snapshots review the rendered artifact, not model obedience.
 // Native pressure scenarios require separate controller-owned verification.
 for (const [name, input] of [
