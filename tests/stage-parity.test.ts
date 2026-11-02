@@ -32,6 +32,7 @@ const sharedStages: Record<SupportedSkill, readonly string[]> = {
     'execution method',
     'Plan: `<plan path>`. Audit: <each reviewer\'s outcome and reviewed version>; report: `<report path>`. Please review both.',
     "each reviewer's actual outcome",
+    "state each reviewer's actual outcome for your human partner",
     'Which execution approach would you prefer?',
     'Does the plan capture what you want?',
   ],

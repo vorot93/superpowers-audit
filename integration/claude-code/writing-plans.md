@@ -21,8 +21,8 @@ for direction when the chain is not cleanly approved.
   complete Adversarial Review above.
 - In **Execution Handoff**, "After saving and self-reviewing the plan, link it
   for your human partner to read." Instead, after saving, self-reviewing, and
-  auditing the plan, link the current plan and audit report and state the actual
-  outcome for your human partner. The rest of that paragraph, on confirming or
+  auditing the plan, link the current plan and audit report and
+  state each reviewer's actual outcome for your human partner. The rest of that paragraph, on confirming or
   choosing the execution method before implementation, stands.
 - In both scripted handoffs, "Plan complete and saved to
   `docs/superpowers/plans/<filename>.md`. Please review the plan." Instead, link
