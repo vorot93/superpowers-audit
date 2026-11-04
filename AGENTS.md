@@ -185,7 +185,8 @@ text, or null for absence), `paths` (the same IDs mapped to independently suppli
 exact native skill paths, or null for absence), and `statuses` (expected lines in
 the shared skill). Include the complete shared audit skill in `bodies` and `paths`,
 including its expected configuration block; status lines alone cannot verify
-configuration. Cover a string-form plugin entry with default options as well as
+configuration. The checker rejects omitted, null, or blank shared-skill body/path
+expectations. Cover a string-form plugin entry with default options as well as
 configured options. Pin upstream paths, not just relative helper availability:
 the builder prompt resolves relative to the preserved brainstorming skill path.
 Remove any old result before launching so a skipped checker cannot pass on stale

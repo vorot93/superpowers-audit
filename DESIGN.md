@@ -116,6 +116,8 @@ writers and reviewers exclude commas and `=` in both hosts. Repeated Claude Code
 entries with the same writer form a chain in entry order, and both hosts render every
 value as a JSON array, including a chain of one. Error wording is
 host-specific; the shared contract is the block shape and the named key.
+Round limits share JavaScript's positive safe-integer range; the shell validator
+compares decimal lengths and digits rather than rounding through awk's numbers.
 
 Whitespace follows ECMAScript's `\s`/`trim` set in both hosts. The C-locale hook
 matches complete UTF-8 sequences explicitly: locale-dependent character classes

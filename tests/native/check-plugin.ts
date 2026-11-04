@@ -23,6 +23,12 @@ export default {
         'path expectations are required');
       assert.deepEqual(Object.keys(expected.paths).sort(), Object.keys(expected.bodies).sort(),
         'path expectations must cover exactly the body IDs');
+      const sharedBody = expected.bodies['superpowers-audit'];
+      const sharedPath = expected.paths['superpowers-audit'];
+      assert(typeof sharedBody === 'string' && sharedBody.trim().length > 0,
+        'complete shared audit skill body expectations are required');
+      assert(typeof sharedPath === 'string' && sharedPath.trim().length > 0,
+        'shared audit skill path expectations are required');
       const skills = await ctx.skill.list();
       const commands = await ctx.command.list();
       const shared = skills.data.filter(skill => skill.id === 'superpowers-audit');

@@ -149,7 +149,11 @@ configuration() {
 
       rounds = "5"
       if ("CLAUDE_PLUGIN_OPTION_MAXROUNDS" in ENVIRON) rounds = ENVIRON["CLAUDE_PLUGIN_OPTION_MAXROUNDS"]
-      if (rounds !~ /^[1-9][0-9]*$/) fail("maxRounds: \"" rounds "\" is not a positive integer")
+      # Match the Zod safe-integer bound without rounding through awk doubles.
+      # The prefix forces a lexical comparison for equal-length decimal strings.
+      if (rounds !~ /^[1-9][0-9]*$/ || length(rounds) > 16 ||
+          (length(rounds) == 16 && ("x" rounds) > "x9007199254740991"))
+        fail("maxRounds: \"" rounds "\" is not an integer from 1 to 9007199254740991")
 
       if ("CLAUDE_PLUGIN_OPTION_ARTIFACTDIRECTORY" in ENVIRON) {
         directory = ENVIRON["CLAUDE_PLUGIN_OPTION_ARTIFACTDIRECTORY"]

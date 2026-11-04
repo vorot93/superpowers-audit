@@ -29,7 +29,7 @@ test('manifest matches the package', async () => {
     expect(typeof option.description).toBe('string');
   }
   expect(plugin.userConfig.reviewers).toMatchObject({ type: 'string', multiple: true });
-  expect(plugin.userConfig.maxRounds).toMatchObject({ type: 'number', min: 1, default: 5 });
+  expect(plugin.userConfig.maxRounds).toMatchObject({ type: 'number', min: 1, max: 9007199254740991, default: 5 });
   expect(plugin.userConfig.artifactDirectory.type).toBe('string');
 });
 

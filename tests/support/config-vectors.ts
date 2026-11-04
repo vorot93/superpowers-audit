@@ -48,6 +48,12 @@ export const configVectors: readonly ConfigVector[] = [
   { name: 'zero rounds', options: { maxRounds: 0 }, env: maxRounds('0'), valid: false, errorKey: 'maxRounds' },
   { name: 'fractional rounds', options: { maxRounds: 1.5 }, env: maxRounds('1.5'), valid: false, errorKey: 'maxRounds' },
   { name: 'non-numeric rounds', options: { maxRounds: '5x' }, env: maxRounds('5x'), valid: false, errorKey: 'maxRounds' },
+  { name: 'rounds below safe-integer limit', options: { maxRounds: 9007199254740990 }, env: maxRounds('9007199254740990'), valid: true },
+  { name: 'maximum safe rounds', options: { maxRounds: 9007199254740991 }, env: maxRounds('9007199254740991'), valid: true },
+  { name: 'rounds above safe-integer limit', options: { maxRounds: 9007199254740992 }, env: maxRounds('9007199254740992'), valid: false, errorKey: 'maxRounds' },
+  { name: 'unrepresentable rounds above safe-integer limit', env: maxRounds('9007199254740993'), valid: false, errorKey: 'maxRounds' },
+  { name: 'sixteen-digit rounds above safe-integer limit', env: maxRounds('9999999999999999'), valid: false, errorKey: 'maxRounds' },
+  { name: 'seventeen-digit rounds', options: { maxRounds: 10000000000000000 }, env: maxRounds('10000000000000000'), valid: false, errorKey: 'maxRounds' },
   {
     name: 'blank directory',
     options: { artifactDirectory: ' \t ' },

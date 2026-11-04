@@ -180,7 +180,7 @@ placeholders; replace them with explicit choices from your OpenCode model catalo
 | Option | Default | Meaning |
 | --- | --- | --- |
 | `reviewers` | `{}` | User-selected reviewer chains keyed by drafting `provider/model`, without its variant. Each value is a reviewer string or a non-empty array of them, in chain order; the same reviewer string twice in one chain is rejected. Reviewers accept an optional `#variant`; model IDs may contain `/`, but entries cannot contain commas or `=`. Candidates must still satisfy independence and availability checks. |
-| `maxRounds` | `5` | Positive integer per reviewer per target counting the initial auditor call and every explicit follow-up, including clarifications. Native retries and reading existing replies do not add rounds. |
+| `maxRounds` | `5` | Integer from 1 to 9007199254740991 (JavaScript's maximum safe integer) per reviewer per target counting the initial auditor call and every explicit follow-up, including clarifications. Native retries and reading existing replies do not add rounds. |
 | `artifactDirectory` | Project convention | Nonempty path for audit artifacts. Relative paths resolve from the writer's project root; reports go in `audits/` beneath it. When omitted, the writer uses the project's `.superpowers` link or stated convention, asking when unclear. |
 
 Invalid or unknown options produce a visible correction request before dispatch

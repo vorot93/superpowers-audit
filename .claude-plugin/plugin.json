@@ -17,6 +17,7 @@
     "maxRounds": {
       "type": "number",
       "min": 1,
+      "max": 9007199254740991,
       "default": 5,
       "title": "Maximum audit rounds",
       "description": "Positive integer limiting the audit rounds per reviewer on each target."

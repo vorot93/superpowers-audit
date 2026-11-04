@@ -7,8 +7,16 @@ import checker from './native/check-plugin.js';
 import { skillInfo } from './support/registry.js';
 
 const expectations = {
-  bodies: { brainstorming: '# Design fixture\n', 'writing-plans': null },
-  paths: { brainstorming: '/skills/brainstorming/SKILL.md', 'writing-plans': null },
+  bodies: {
+    brainstorming: '# Design fixture\n',
+    'writing-plans': null,
+    'superpowers-audit': '# Superpowers Audit\nbrainstorming: integrated\n',
+  },
+  paths: {
+    brainstorming: '/skills/brainstorming/SKILL.md',
+    'writing-plans': null,
+    'superpowers-audit': '/skills/superpowers-audit/SKILL.md',
+  },
   statuses: ['brainstorming: integrated'],
 };
 
@@ -72,6 +80,37 @@ test('native checker rejects correct bodies at the wrong stable path', async () 
   expect(result.error).toBeDefined();
   expect(result.result).toMatchObject({ ok: false });
   expect(result.result.error).toContain('brainstorming: exact native path');
+});
+
+for (const [name, body, path] of [
+  ['missing', undefined, undefined],
+  ['absent', null, null],
+  ['empty body', '', '/skills/superpowers-audit/SKILL.md'],
+  ['blank body', ' \n', '/skills/superpowers-audit/SKILL.md'],
+  ['empty path', '# Superpowers Audit\n', ''],
+  ['blank path', '# Superpowers Audit\n', ' \t'],
+] as const) {
+  test(`native checker rejects ${name} shared skill expectations`, async () => {
+    const bodies: Record<string, string | null> = { ...expectations.bodies };
+    const paths: Record<string, string | null> = { ...expectations.paths };
+    if (body === undefined) delete bodies['superpowers-audit'];
+    else bodies['superpowers-audit'] = body;
+    if (path === undefined) delete paths['superpowers-audit'];
+    else paths['superpowers-audit'] = path;
+    const result = await check({ ...expectations, bodies, paths });
+    expect(result.error).toBeDefined();
+    expect(result.result.ok).toBe(false);
+    expect(result.result.error).toContain('shared audit skill');
+  });
+}
+
+test('native checker rejects an incomplete shared body even with its heading and status', async () => {
+  const result = await check({
+    ...expectations,
+    bodies: { ...expectations.bodies, 'superpowers-audit': '# Superpowers Audit\nbrainstorming: integrated\n## Configuration\n' },
+  });
+  expect(result.error).toBeDefined();
+  expect(result.result.error).toContain('superpowers-audit: full native body');
 });
 
 for (const [name, paths] of [
