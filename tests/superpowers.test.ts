@@ -7,10 +7,10 @@ import { expected, fixture, mutateSentence, skillIDs } from './support/fixtures.
 const hash = (text: string) => createHash('sha256').update(text).digest('hex');
 
 test('fixture provenance retains the immutable upstream revision and complete-file digests', () => {
-  const root = new URL('./fixtures/superpowers-7.0.1/', import.meta.url);
+  const root = new URL('./fixtures/superpowers-7.0.2/', import.meta.url);
   const provenance = readFileSync(new URL('README.md', root), 'utf8');
   expect(provenance).toContain('https://github.com/obra/superpowers');
-  expect(provenance).toContain('2ce8aa15d05bd57213e6f746f953aafb7ded7a8b');
+  expect(provenance).toContain('22f0b463e7a5e579904dd6211a520321035526f7');
   for (const id of skillIDs) {
     const raw = readFileSync(new URL(`${id}.md`, root));
     const digest = createHash('sha256').update(raw).digest('hex');

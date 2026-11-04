@@ -7,11 +7,11 @@ export interface SkillAdaptation {
   reason?: string;
 }
 
-// Superpowers 7.0.1 bodies live only in attributed tests. Normalize only CRLF.
+// Superpowers 7.0.2 bodies live only in attributed tests. Normalize only CRLF.
 export const supportedHashes: Record<SupportedSkill, { baseline: string; transformed: string }> = {
   brainstorming: {
-    baseline: '8e43c8181a17642ac8c8b6e1c3fa29294ef5d3fa64f67eaa917ff709298a0b96',
-    transformed: 'ade3e421585aca21862bb194a762f9e498e042b281e4b43346b1351c2919fb10',
+    baseline: '15849caba06be88789f93da04dff79b040e26ce9a2bcdfe66c55d3ccf61d3046',
+    transformed: '894c30798b2582242f12d8089c7f98c3653cfd310b4f68d5db70c56953fe640a',
   },
   'writing-plans': {
     baseline: '1fa01b954171b1d2b8bc0208dfbc6a01edf8a2ca715d18f76f043952e37e744f',
@@ -21,6 +21,26 @@ export const supportedHashes: Record<SupportedSkill, { baseline: string; transfo
 
 const edits: Record<SupportedSkill, readonly (readonly [string, string])[]> = {
   brainstorming: [
+    [
+      "If nothing is open when you write your first message and there's one\n"
+        + 'sensible way, steps 1 to 3 happen in that message (see Your First\nMessage).',
+      "If nothing is open when you write your first message and there's one\n"
+        + 'sensible way, you may combine steps 1 to 3 only after the reviews in\n'
+        + 'Your First Message; this is not a document-stage exemption.',
+    ],
+    [
+      'sensible way: end with the short design itself (the approach, a line on\n'
+        + "  why the others don't fit, and the design in a few lines) and ask them\n"
+        + '  to approve it. Their approval covers the approach and the design: write\n'
+        + '  the short design doc as approved and go on to the plan.',
+      'sensible way: save the short design before Spec Self-Review and Adversarial\n'
+        + '  Review, then complete Question Review of the combined approach, design, and\n'
+        + '  handoff presentation before showing it. Then use Human Document Review to\n'
+        + '  request approval of the current saved design, with the approach, reasons\n'
+        + '  alternatives were rejected, short design, and audit report in the presentation.\n'
+        + '  Earlier conversational approval does not approve an unaudited document.\n'
+        + '  Only after that approval proceed to writing-plans as the HARD-GATE requires.',
+    ],
     [
       '3. Get their approval of that doc.',
       '3. Complete the applicable builder check, Spec Self-Review, and Adversarial\n'

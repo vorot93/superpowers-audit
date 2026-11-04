@@ -39,6 +39,20 @@ Reentry into brainstorming restores this stage.
 - In the opening sequence, "3. Get their approval of that doc." Instead, complete
   the applicable builder check, Spec Self-Review, and Adversarial Review, then get
   approval of the current document through Human Document Review.
+- In the opening shortcut, "If nothing is open when you write your first message
+  and there's one sensible way, steps 1 to 3 happen in that message (see Your
+  First Message)." Instead, you may combine those steps only after the reviews
+  below; this is not a document-stage exemption.
+- In **Your First Message**, "Their approval covers the approach and the design:
+  write the short design doc as approved and go on to the plan." Instead, when
+  nothing is open and there is one sensible way, save the short design before
+  Spec Self-Review and Adversarial Review, then complete Question Review of the
+  combined approach, design, and handoff presentation before showing it. Then use
+  Human Document Review to request approval of the current saved design, with the
+  approach, reasons alternatives were rejected, short design, and audit report in
+  the presentation. Earlier conversational approval does not approve an unaudited
+  document. Only after that approval proceed to writing-plans as the amended
+  HARD-GATE requires.
 - In **The Written Design**, "For a small change, the short design covers the same
   points in a line or two each and goes straight to your human partner, without the
   builder check." Instead: Short designs omit the builder check, then receive Spec Self-Review,

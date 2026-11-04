@@ -1,6 +1,7 @@
 import { expect, test } from 'bun:test';
 import { readFileSync } from 'node:fs';
 import type { SupportedSkill } from '../src/skill.js';
+import { adaptSkill } from '../src/superpowers.js';
 import { expected, fixture, skillIDs } from './support/fixtures.js';
 
 // Claude Code adds each stage beside the unchanged upstream skill; OpenCode
@@ -38,12 +39,14 @@ const sharedStages: Record<SupportedSkill, readonly string[]> = {
   ],
 };
 
-// Upstream 7.0.1 steps each amendment quotes as superseded.
+// Upstream 7.0.2 steps each amendment quotes as superseded.
 const superseded: Record<SupportedSkill, readonly string[]> = {
   brainstorming: [
     "Don't hand over the document until the check is back.",
     'then hand it over with a short list of the calls you made',
     '3. Get their approval of that doc.',
+    "If nothing is open when you write your first message and there's one sensible way, steps 1 to 3 happen in that message (see Your First Message).",
+    'Their approval covers the approach and the design: write the short design doc as approved and go on to the plan.',
     'For a small change, the short design covers the same points in a line or two each and goes straight to your human partner, without the builder check.',
     'After the design doc is approved, the next step is the plan: invoke superpowers:writing-plans and no other skill.',
   ],
@@ -70,6 +73,20 @@ test('shared stage strings appear in both hosts', () => {
       expect(amendment(id)).toContain(text);
     }
   }
+});
+
+test('the first-message short-design route receives both reviews before approval in both hosts', () => {
+  const adapted = adaptSkill('brainstorming', fixture('brainstorming')).content;
+  for (const body of [adapted, expected('brainstorming'), amendment('brainstorming')]) {
+    const text = flat(body);
+    expect(text).toContain('save the short design before Spec Self-Review and Adversarial Review');
+    expect(text).toContain('complete Question Review of the combined approach, design, and handoff presentation before showing it');
+    expect(text).toContain('Then use Human Document Review to request approval of the current saved design');
+    expect(text).toContain('Earlier conversational approval does not approve an unaudited document.');
+  }
+  const text = flat(adapted);
+  expect(text).not.toContain('steps 1 to 3 happen in that message');
+  expect(text).not.toContain('write the short design doc as approved and go on to the plan');
 });
 
 test('Claude Code amendments are complete on their own', () => {

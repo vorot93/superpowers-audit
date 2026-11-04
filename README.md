@@ -2,7 +2,7 @@
 
 Independent review of specifications, implementation plans, and saved questions in
 OpenCode v2 and Claude Code. The plugin adds `/audit`, a shared audit skill, and automatic audit
-stages for Superpowers **7.0.1** brainstorming and writing-plans skills. In both
+stages for Superpowers **7.0.2** brainstorming and writing-plans skills. In both
 hosts, auditors run as OpenCode's `explore` agent on the models you choose, one after another.
 
 > Write → self-review → independent audit → human document review.
@@ -13,6 +13,8 @@ short to full, the expanded design needs its builder check, renewed review and
 approval. Both approved sizes hand off to writing-plans, including non-software work.
 Quick tasks, question opt-outs, and authorized throwaway spikes keep their document
 exemptions; choices actually presented during active brainstorming still need review.
+The first-message short-design shortcut saves and reviews the design before asking
+for approval; its combined approach/design presentation also receives question review.
 
 The existing writer discusses findings with an auditor, verifies claims, applies
 justified corrections, and saves a Markdown report. Material design changes go to
@@ -194,7 +196,7 @@ needs shortening.
 ## Integration and limits
 
 In OpenCode, automatic integration checks each skill independently against the
-exact supported Superpowers 7.0.1 body, normalizing CRLF line endings. Package
+exact supported Superpowers 7.0.2 body, normalizing CRLF line endings. Package
 version is not checked: an identical skill body from another release also matches,
 even when that release's other skill does not. Changed or customized definitions
 retain their content with an **Audit integration unavailable** notice; missing
@@ -206,7 +208,7 @@ spliced into it: when `superpowers:brainstorming` or `superpowers:writing-plans`
 loads through the Skill tool or is typed as a slash command, the plugin adds an
 amendment that names the upstream steps it supersedes. There is no body check, so
 the stages are added for any Superpowers version, but the amendments are written
-against Superpowers 7.0.1 and may misdescribe the steps of other releases, earlier
+against Superpowers 7.0.2 and may misdescribe the steps of other releases, earlier
 or later.
 
 Claude Code re-attaches invoked skill bodies after compaction but not hook output,
@@ -262,6 +264,10 @@ The native runs below predate the routine-offer and nested-question clarificatio
 - Reviewer chains were registry-verified on OpenCode **2.2.5** with no model, for a
   string-form plugin entry with default options and for a configured two-member
   chain rendered as an array.
+- Superpowers **7.0.2** was registry-verified on OpenCode **2.2.5** from a
+  production-only local tarball, with default and configured options: complete
+  adapted authoring bodies, the complete shared skill and configuration, exact
+  upstream paths, `/audit` registration, and three reloads. No model was used.
 - Live on Claude Code **2.1.316** with `--plugin-dir`, repeated `reviewers` entries
   arrived in entry order. A manual `/audit` of a spec with a seeded contradiction
   ran a two-member chain (`xai/grok-4.7#xhigh`, then `openai/gpt-6-astra#high`) with
@@ -278,7 +284,8 @@ report-save failure,
 routine-offer exemptions, paused enclosing document or question audits,
 compaction recovery, and oversized-context recovery; a round expiring (exit 124 or
 142) under the shipped reference, though expiry, session export, and resend
-were exercised manually during development; complete automatic Superpowers 7.0.1
+were exercised manually during development; the Superpowers 7.0.2 first-message
+short-design shortcut; complete automatic Superpowers 7.0.2
 spec and plan authoring, audit, and handoff in either host; and renewed document
 audits after actual human edits or requested changes. The question-revision probe
 used a controller-authored instruction. Unit/package tests, registry checks, and
@@ -308,4 +315,4 @@ See [AGENTS.md](AGENTS.md) for maintenance and verification conventions and
 
 This project is licensed under [Apache-2.0](LICENSE). Superpowers instruction
 excerpts and fixtures are derived from Jesse Vincent's MIT-licensed Superpowers.
-See [NOTICE](NOTICE) and the [fixture attribution](tests/fixtures/superpowers-7.0.1/README.md).
+See [NOTICE](NOTICE) and the [fixture attribution](tests/fixtures/superpowers-7.0.2/README.md).
