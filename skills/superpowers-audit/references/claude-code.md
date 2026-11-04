@@ -33,7 +33,7 @@ never reuse an existing ID for a new audit or member; a member's follow-up round
 reuse its own ID.
 
 The auditor is OpenCode's `explore` agent. It cannot load skills, edit files, or
-launch subagents; its shell remains available, so read-only is still an instruction.
+launch subagents; its shell remains, so read-only is still an instruction.
 
 ### Work files
 
@@ -46,35 +46,31 @@ the dispatch writes the reply to `round<N>-reply.md` and diagnostics to
 ### Dispatch
 
 From the project root, run each round as one Bash call with
-`run_in_background: true` and `timeout: 1860000` (31 minutes: the shell limit
-below plus a minute; unattended text-prompt sessions otherwise stop background
-commands after 10 minutes).
+`run_in_background: true` and `timeout: 1860000` (the shell limit below plus a
+minute; unattended text-prompt sessions otherwise stop background commands after
+10 minutes).
 
 ```sh
 timeout 30m opencode run --agent explore -m '<provider/model#variant>' -s '<session id>' --title 'audit: <slug>' -f '<work dir>/round<N>-prompt.md' 'Your audit assignment for this round is the attached file, already delivered with this message; follow it exactly and reply in the format it specifies.' < /dev/null > '<work dir>/round<N>-reply.md' 2> '<work dir>/round<N>.log'
 ```
 
-Pass the resolved model with any `#variant`. `-f` attaches the prompt, avoiding
+Pass the resolved model with any `#variant`. `-f` attaches the prompt without
 command substitution. Where `timeout` is absent (macOS), replace `timeout 30m` with
-`perl -e 'alarm shift; exec @ARGV' 1800`.
-Keep `< /dev/null`; without it, `opencode run` can stall waiting for end of input
-before creating the session.
-Do not pass `--auto`: it would approve requests that the user's OpenCode
-permissions leave to `ask`. Wait for Claude Code's completion notice; do not poll
-or sleep.
+`perl -e 'alarm shift; exec @ARGV' 1800`. Keep `< /dev/null`, or `opencode run`
+can stall awaiting end of input. Do not pass `--auto`: it would approve requests
+that the user's OpenCode permissions leave to `ask`. Wait for Claude Code's
+completion notice; do not poll or sleep.
 
-If Claude Code denies the output redirections (for example into an artifact
-directory outside the project), run the same command without the output
-redirections, keeping `< /dev/null`. When it completes, read the background task's
-output and save the reply text to `round<N>-reply.md` with the Write tool.
+If Claude Code denies the output redirections, run the same command without the
+output redirections, keeping `< /dev/null`. When it completes, read the background
+task's output and save the reply text to `round<N>-reply.md` with the Write tool.
 
 ### Reading a round
 
-Read `round<N>-reply.md`; commentary before `## Assessment` is normal. Exit 0,
-nonempty text, or an approval heading does not establish a completed assessment:
-accept a round only after the export check below. After a non-zero exit or empty
-reply, also Read `round<N>.log`. Exit 124 (`timeout`), 142 (`perl`'s alarm), or a
-Claude Code time-limit stop (which need not produce either) is a tool failure:
+Read `round<N>-reply.md`; commentary before `## Assessment` is normal. Even after
+exit 0, accept a round only after the export check below. After a non-zero exit or
+empty reply, also Read `round<N>.log`. Exit 124 (`timeout`), 142 (`perl`'s alarm),
+or a Claude Code time-limit stop (which need not produce either) is a tool failure:
 check the export, report the failure, and ask the human even if a final reply is
 recoverable.
 
@@ -90,25 +86,28 @@ After every round, export the session and summarize it without tool output:
 
 ```sh
 opencode session export '<session id>' > '<work dir>/round<N>-export.json' 2>> '<work dir>/round<N>.log'
-jq -c '.messages[] | {type, file: ((.text // "") | [match("<file name=\"([^\"]+)\"").captures[0].string][0]), finish, completed: .time.completed, error, outcome, tools: [.content[]? | select(.type == "tool").state.status], text: ([.content[]? | select(.type == "text").text] | add)} | del(.[] | select(. == null or . == []))' '<work dir>/round<N>-export.json'
+jq -c '.messages[] | {type, file: ((.text // "") | [match("<file name=\"([^\"]+)\"").captures[0].string][0]), finish, completed: .time.completed, error, outcome, tools: [.content[]? | select(.type == "tool") | if .state.status == "error" then {name, input: (.state.input | tojson | .[:200]), error: .state.error.message} else .state.status end], text: ([.content[]? | select(.type == "text").text] | add)} | del(.[] | select(. == null or . == []))' '<work dir>/round<N>-export.json'
 ```
 
 An export can be truncated despite exit 0 (as through a pipe); use only a
 complete JSON document, which a `jq` parse error rules out. Without `jq`, Read the
 whole file. If the redirection is denied, run the export without it, read the
 complete output, and save it with the Write tool; if saving is denied too, report
-that, but never resend merely because no file was saved.
+that; never resend merely because no file was saved.
 
 In OpenCode 2.2.5, a round is a `user` message whose `file` is its prompt, then
 `assistant` steps, `synthetic` continuations after an interruption, and an `idle`
 record; use only this round's messages. A completed assessment needs `idle` with
-`outcome: "succeeded"`, every tool `state.status` `completed`, and a last assistant
-message with `finish: "stop"`, `completed`, no `error`, and complete text answering
-the assignment. `executed: false` on tool parts and `completed` on tool-call steps
-are normal. Anything else, such as a `length` or `unknown` finish, a missing `idle`,
-or cut-off text, is insufficient even with an approval heading. A missing `idle`
-record does not show that the turn is still running; do not wait on it. For another
-version or shape, establish equivalent evidence; absent metadata is not success.
+`outcome: "succeeded"`, every tool settled (`state.status` `completed` or `error`),
+and a last assistant message with `finish: "stop"`, `completed`, no `error`, and
+complete text answering the assignment. `executed: false` and `completed` on
+tool-call steps are normal. A tool `error`, such as a missing path, is not a failed
+turn, but if the auditor neither recovered that input nor states it could not
+examine it, completion is ambiguous. A `streaming` or `running` tool, a `length` or
+`unknown` finish, a missing `idle`, or cut-off text is insufficient even with an
+approval heading; a missing `idle` does not show that the turn is still running,
+so do not wait on it. Other versions need equivalent evidence; absent metadata is
+not success.
 
 - `Session not found` for the dispatched ID means no session exists. Only a
   complete export shows a prompt is absent; export errors, unreadable output, or
@@ -125,22 +124,21 @@ version or shape, establish equivalent evidence; absent metadata is not success.
   rules; an interruption is not a format-repair round and does not reset the budget.
 
 After compaction, the chain position, session ID, and round count come from the
-conversation; the work files and the OpenCode sessions are evidence for
-re-establishing them.
+conversation; work files and sessions help re-establish them.
 
 ### Permissions
 
 Claude Code's permission prompts for these commands remain the user's; nothing is
-pre-authorized. The non-interactive run auto-rejects a permission it cannot ask
-about, and the auditor continues; weigh its required statement of inputs it could
-not examine. Auto-rejection blocks only that tool call: its shell can still read
-the same file, so keeping credentials out of review rests on the assignment alone.
+pre-authorized. The run auto-rejects a permission it cannot ask about; the auditor
+continues and states what it could not examine. Auto-rejection blocks only that
+tool call: its shell can still read the same file, so keeping credentials out of
+review rests on the assignment alone.
 
 ### Question presentation
 
 Claude Code's native question tool is `AskUserQuestion`, with a `questions` array.
 Consult its active schema/instructions for every authored field: question text,
 headers, ordered option labels/descriptions, multi-selection, and any previews or
-additional fields. Establish the actual CLI's free-text/other-answer mechanisms; an
-SDK example does not establish them. Include all authored fields and answer
-mechanisms in review context; each question in a batch is its own audit target.
+additional fields. Establish the actual CLI's free-text/other-answer mechanisms, not
+an SDK example's. Include all authored fields and answer mechanisms in review
+context; each question in a batch is its own audit target.

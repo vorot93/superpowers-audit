@@ -316,9 +316,13 @@ test('reference completion check names the 2.2.5 export evidence', () => {
     // Exit 0 does not make an export complete: a pipe can cut it silently.
     'truncated despite exit 0', 'complete JSON document',
     // The end-of-turn record; its absence refuses the round rather than waiting.
-    '`idle`', '`outcome: "succeeded"`', 'A missing `idle` record does not show that the turn is still running',
-    // Tool state lives in state.status; executed: false is normal.
+    '`idle`', '`outcome: "succeeded"`', 'a missing `idle` does not show that the turn is still running',
+    // Tool state lives in state.status; executed: false is normal. A settled tool
+    // error is weighed for recovery, not rejected outright; unsettled tools fail.
     '`state.status`', '`executed: false`', '`synthetic`',
+    'every tool settled (`state.status` `completed` or `error`)', 'is not a failed turn',
+    'neither recovered that input nor states it could not examine it, completion is ambiguous',
+    '`streaming` or `running` tool',
     // A stopped dispatch command has no completion notice to wait for.
     'While the round\'s background command is still running', 'Once it has stopped',
   ]) expect(text).toContain(phrase);
@@ -343,12 +347,17 @@ test("reference's export summary keeps completion evidence and drops tool output
   expect(stdout.trim().split('\n').map(line => JSON.parse(line))).toEqual([
     { type: 'agent-switched' },
     { type: 'user', file: 'round1-prompt.md' },
-    { type: 'assistant', finish: 'tool-calls', completed: 1005, tools: ['completed'], text: 'Reading the target.' },
-    { type: 'assistant', finish: 'stop', completed: 1008, text: '## Assessment\nApproved\n\n## Findings\nNone.' },
+    // A settled tool error stays visible with its input so the writer can judge recovery.
+    {
+      type: 'assistant', finish: 'tool-calls', completed: 1005,
+      tools: [{ name: 'read', input: '{"path":"spec.mdx"}', error: 'File not found: spec.mdx' }], text: 'Reading the target.',
+    },
+    { type: 'assistant', finish: 'tool-calls', completed: 1008, tools: ['completed'] },
+    { type: 'assistant', finish: 'stop', completed: 1011, text: '## Assessment\nApproved\n\n## Findings\nNone.' },
     { type: 'idle', outcome: 'succeeded' },
     { type: 'agent-switched' },
     { type: 'user', file: 'round2-prompt.md' },
-    { type: 'assistant', finish: 'error', completed: 1013, error: transport('Timed out waiting for response data') },
+    { type: 'assistant', finish: 'error', completed: 1016, error: transport('Timed out waiting for response data') },
     { type: 'synthetic' },
     { type: 'idle', outcome: 'failed', error: transport('Timed out waiting for response headers') },
   ]);
@@ -361,7 +370,7 @@ test("reference's export summary keeps completion evidence and drops tool output
   try {
     const truncated = join(root, 'export.json');
     const full = await readFile(fixture, 'utf8');
-    await writeFile(truncated, full.slice(0, full.indexOf('"msg_06"')));
+    await writeFile(truncated, full.slice(0, full.indexOf('"msg_07"')));
     expect((await run(truncated)).exitCode).not.toBe(0);
   } finally {
     await rm(root, { recursive: true });

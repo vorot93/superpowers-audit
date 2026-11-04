@@ -142,10 +142,13 @@ optional and must resolve to that external directory if used.
   session export even on the ordinary reply path. OpenCode 2.2.5 CLI exports are
   top-level `info`/`messages`, not the HTTP route's `data` wrapper; tool-call messages
   have `time.completed` too. Require the final assistant message's normal `stop`
-  finish, a following `idle` record with `outcome: "succeeded"`, tool
-  `state.status` `completed` (completed tool parts still say `executed: false`), no
-  errors, and a complete answer. A missing `idle` refuses the round; it does not
-  prove the auditor is still running. Unknown metadata requires clarification. Keep
+  finish, a following `idle` record with `outcome: "succeeded"`, settled tool
+  `state.status` (`completed` or `error`; both still say `executed: false`), no
+  message errors, and a complete answer. A settled tool `error` (such as a missing
+  path) is routine, and auditors recover from it: weigh recovery and stated coverage
+  rather than rejecting the round, so the summary keeps each errored call's name,
+  input, and message. A missing `idle` refuses the round; it does not prove the
+  auditor is still running. Unknown metadata requires clarification. Keep
   export reads and waiting distinct from counted format repair; a killed client does
   not prove the host-owned auditor stopped, and it sends no completion notice.
 - `opencode session export` (2.2.5) to a pipe silently truncates large exports at

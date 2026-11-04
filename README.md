@@ -306,10 +306,12 @@ The completion gate's CLI fields were checked on existing OpenCode 2.2.5 session
 exports, one with a provider transport failure: tool-call steps and final replies
 both carry `time.completed` with different `finish` values, each round ends with an
 `idle` record (`succeeded` or `failed`), and completed tool parts report
-`executed: false`. The reference's `jq` summary was checked on those shapes. This
-verifies the CLI export shape, not live recovery from interruption, token-limit
-truncation, or a client disconnect with a still-running auditor; nor whether Claude
-Code's Bash tool truncates an export captured without redirection.
+`executed: false`. OpenCode 2.2.1 auditor exports also show settled `error` tool
+parts (missing paths) in rounds that still ended `succeeded`, so a recovered tool
+error does not refuse a round. The reference's `jq` summary was checked on those
+shapes. This verifies the CLI export shape, not live recovery from interruption,
+token-limit truncation, or a client disconnect with a still-running auditor; nor
+whether Claude Code's Bash tool truncates an export captured without redirection.
 
 ## Development
 
