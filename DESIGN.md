@@ -15,6 +15,15 @@ own everything else:
   reference. Round work files are report evidence, not state: delivery checks read
   OpenCode's own session rather than a plugin-maintained record.
 
+The Claude Code reference separates prompt delivery from completed assessment.
+Every result, including an exit-0 reply, is checked against its native session
+export and scoped to the matching prompt before the next user turn. A completed
+message can be an intermediate tool step, so the writer checks final termination,
+errors, tool state, and the complete assessment together. Known-running work is
+awaited; incomplete or uncertain completion uses the shared Failed-member pause,
+not a format-repair follow-up. Export reading adds no auditor round. These are
+writer instructions, not a new transcript parser or execution state machine.
+
 This boundary deliberately excludes a custom audit runner, reconstructed history,
 response-delivery protocol, audit-state store, or extra filesystem/permission
 layer. Those mechanisms would duplicate the host and move review decisions away

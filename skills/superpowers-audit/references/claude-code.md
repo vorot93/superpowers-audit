@@ -70,28 +70,26 @@ auditor session's export, below, remains the recovery source.
 
 ### Reading a round
 
-Read `round<N>-reply.md` with the Read tool. The round is delivered when the
-command exited 0 and the reply is not empty; lines before its `## Assessment`
-section are normal. After a non-zero exit or an empty reply, Read `round<N>.log`
-and treat the round as undelivered. Exit status 124 (`timeout`) or 142 (`perl`'s
-alarm) means the 30-minute limit expired, most likely a stalled client or service
-(for example stdin not redirected) or a very long auditor turn: check delivery as
-below, report a tool failure, and ask the human.
+Read `round<N>-reply.md` with the Read tool; commentary before `## Assessment` is
+normal. Prompt delivery and assessment completion are separate: exit 0, nonempty
+text, or an approval heading alone establishes no completed assessment. Before
+accepting any round, including a normal exit, check its session export below.
 
-If Claude Code reports that the background command was stopped at its own time
-limit, delivery is also unknown: follow the export procedure below before any
-resend, report the tool failure, and ask the human. A host stop need not produce
-exit status 124 or 142.
+After a non-zero exit or empty reply, also Read `round<N>.log`; delivery is unknown.
+Exit 124 (`timeout`), 142 (`perl`'s alarm), or a host time-limit stop requires checking
+the export, reporting a tool failure, and asking the human even if a final reply is
+recoverable. A host stop need not produce 124 or 142. Keep the shared skill's
+Failed-member pause and round budget; incomplete output is not a format defect.
 
-A reply that otherwise answers the assignment but lacks its `## Assessment`
-heading is a format problem, not non-delivery: in the next round, ask the auditor
-to restate its reply in the assignment's reply format; that follow-up counts as a
-round.
+Only a verified completed reply that otherwise answers the assignment but lacks
+`## Assessment` is a format problem, not non-delivery. If a round remains, ask the
+auditor to restate it in the required format in the same session and model; that
+follow-up counts as a round. At the limit, use the shared skill's exhaustion rules.
 
-### Unknown delivery
+### Export and completion check
 
-Before resending a round that is undelivered, expired, killed, or interrupted by a
-context clear, export the auditor session and Read the file:
+Export the auditor session and Read the complete file, for normal results as well
+as recovery after an interrupted, killed, expired, or uncertain round:
 
 ```sh
 opencode session export '<session id>' > '<work dir>/round<N>-export.json' 2>&1
@@ -103,13 +101,31 @@ file references, and save it to `round<N>-export.json` with the Write tool.
 If saving is also denied, use the complete output to check delivery and report
 the evidence-save failure; do not resend merely because no export file was saved.
 
-`Session not found` means the session was never created, so no prompt arrived.
-Otherwise find the round's prompt and any assistant reply after it:
+OpenCode 2.2.5 CLI exports have top-level `info` and `messages`. Match this round's
+prompt/attachment, then inspect its assistant messages before the next user prompt.
+Do not substitute a reply from another round. A completed final assessment requires
+the final assistant message's `time.completed`, `finish: "stop"`, no `error`, no
+pending tools, and complete text answering the assignment. A tool-call step can
+also have `time.completed`; that field alone is insufficient. Treat `length`,
+`tool-calls`, `content-filter`, `error`, `unknown`, missing completion evidence, and
+cut-off text as insufficient, even with an approval heading or a normal CLI exit.
+For other export shapes, establish equivalent completion evidence; do not infer
+CLI fields from the experimental HTTP schema or assume absent metadata means success.
 
-- resend only if the round's prompt is absent;
-- if a reply follows it, recover that reply from the export instead;
-  recovering an existing reply adds no round;
-- ask the human if the prompt arrived without a reply.
+- A reliable `Session not found` result establishes no session. Otherwise use only
+  a successful, complete export to establish prompt absence. Export errors,
+  unreadable output, or ambiguous identity require human direction, not a resend.
+- resend only if the round's prompt is absent and no outstanding failure or human
+  cancellation requires direction first. Retry within that round, without resetting
+  the budget.
+- If a completed final assessment follows the matching prompt, recover it;
+  recovering an existing reply adds no round. Retain any separate tool-failure pause.
+- If the host confirms the original turn is still running, wait for its completion
+  notice without polling, resending, or counting another round. Client termination
+  alone does not establish that the auditor stopped. Retain any tool-failure pause.
+- Otherwise ask the human if the prompt arrived without a reply or with incomplete,
+  failed, or ambiguous completion evidence. Follow the shared skill's Failed-member
+  rules; do not charge an interruption as a format-repair round or reset the budget.
 
 After compaction, the chain position, session ID, and round count come from the
 conversation; the work files and the OpenCode sessions are evidence for

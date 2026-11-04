@@ -111,6 +111,14 @@ the human's decision.
 After handoff, direct human edits or changes they request receive self-review and
 a fresh audit.
 
+In Claude Code, the writer checks the auditor's session export before accepting
+each round, including a normal CLI exit. A delivered prompt, tool-call message,
+or approval heading does not establish a completed assessment. Recovery requires
+both final-message completion evidence and a complete answer. A confirmed running
+turn is awaited; incomplete or uncertain completion goes to the human under the
+Failed-member rules. Recovering an existing final reply consumes no extra round;
+only a completed answer with a genuine format defect can need a counted restatement.
+
 ### Question targets
 
 A manual `/audit` can review a saved question outside brainstorming too. Save the
@@ -290,6 +298,12 @@ spec and plan authoring, audit, and handoff in either host; and renewed document
 audits after actual human edits or requested changes. The question-revision probe
 used a controller-authored instruction. Unit/package tests, registry checks, and
 interpretation scenarios do not close these gaps.
+
+The completion gate's CLI field names were checked on an existing OpenCode 2.2.5
+session export: both tool-call steps and the final reply carry `time.completed`,
+while their `finish` values differ. This verifies the CLI export shape, not recovery
+from interruption, token-limit truncation, or a client disconnect with a still-running
+auditor. Those completion-gate paths have not been exercised live.
 
 ## Development
 

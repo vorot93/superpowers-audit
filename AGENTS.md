@@ -138,6 +138,13 @@ optional and must resolve to that external directory if used.
   runs otherwise stop background commands after 10 minutes; backgrounding alone
   does not remove that limit. A host stop need not return shell exit 124 or 142:
   inspect delivery through session export before considering a resend.
+- CLI exit 0 and nonempty output do not establish a completed assessment. Check the
+  session export even on the ordinary reply path. OpenCode 2.2.5 CLI exports are
+  top-level `info`/`messages`, not the HTTP route's `data` wrapper; tool-call messages
+  have `time.completed` too. Require the final message's normal `stop` finish,
+  absence of errors/pending tools, and a complete answer. Unknown metadata requires
+  clarification. Keep export reads and waiting distinct from counted format repair;
+  a killed client does not prove the host-owned auditor stopped.
 - A non-interactive `opencode run` auto-rejects an OpenCode `ask` permission (stderr
   "auto-rejecting"); the tool call fails and the model continues, so `ask` needs no
   user configuration. An apparent hang on one is the stdin stall above. Rejection
