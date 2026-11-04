@@ -17,12 +17,16 @@ own everything else:
 
 The Claude Code reference separates prompt delivery from completed assessment.
 Every result, including an exit-0 reply, is checked against its native session
-export and scoped to the matching prompt before the next user turn. A completed
-message can be an intermediate tool step, so the writer checks final termination,
-errors, tool state, and the complete assessment together. Known-running work is
-awaited; incomplete or uncertain completion uses the shared Failed-member pause,
-not a format-repair follow-up. Export reading adds no auditor round. These are
-writer instructions, not a new transcript parser or execution state machine.
+export, limited to the auditor-session messages that follow the matching prompt. A
+completed message can be an intermediate tool step, so the writer checks final
+termination, the end-of-turn record, errors, tool state, and the complete assessment
+together. Only a still-running dispatch command is awaited: once the client stops,
+no completion notice comes, so incomplete or uncertain completion uses the shared
+Failed-member pause, not a format-repair follow-up. Export reading adds no auditor
+round. These are writer instructions, not a new transcript parser or execution state
+machine: the reference's `jq` command only projects export fields (dropping bulky
+tool output so every-round checks fit the writer's context), and the writer still
+matches the round and judges completion.
 
 This boundary deliberately excludes a custom audit runner, reconstructed history,
 response-delivery protocol, audit-state store, or extra filesystem/permission

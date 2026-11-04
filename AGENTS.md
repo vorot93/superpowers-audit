@@ -141,10 +141,24 @@ optional and must resolve to that external directory if used.
 - CLI exit 0 and nonempty output do not establish a completed assessment. Check the
   session export even on the ordinary reply path. OpenCode 2.2.5 CLI exports are
   top-level `info`/`messages`, not the HTTP route's `data` wrapper; tool-call messages
-  have `time.completed` too. Require the final message's normal `stop` finish,
-  absence of errors/pending tools, and a complete answer. Unknown metadata requires
-  clarification. Keep export reads and waiting distinct from counted format repair;
-  a killed client does not prove the host-owned auditor stopped.
+  have `time.completed` too. Require the final assistant message's normal `stop`
+  finish, a following `idle` record with `outcome: "succeeded"`, tool
+  `state.status` `completed` (completed tool parts still say `executed: false`), no
+  errors, and a complete answer. A missing `idle` refuses the round; it does not
+  prove the auditor is still running. Unknown metadata requires clarification. Keep
+  export reads and waiting distinct from counted format repair; a killed client does
+  not prove the host-owned auditor stopped, and it sends no completion notice.
+- `opencode session export` (2.2.5) to a pipe silently truncates large exports at
+  a varying 64 KiB multiple with exit 0; a file redirection is complete. Export to a
+  file, and treat a `jq` parse error as an incomplete export. The every-round
+  export summary uses `jq` so bulky tool output stays out of the writer's context;
+  the hook tests run the reference's `jq` command against
+  `tests/fixtures/opencode-2.2.5-export.json` and need `jq` installed. Keep the
+  fixture's shape in step with real exports when OpenCode changes it.
+- The reference shares the hook's 10,000-byte budget with rendered `reviewers`
+  mappings (about 160 bytes per writer with three reviewers). A hook test requires
+  six writers' chains plus an artifact directory to fit within 9,500 bytes; shorten
+  the reference rather than relaxing it.
 - A non-interactive `opencode run` auto-rejects an OpenCode `ask` permission (stderr
   "auto-rejecting"); the tool call fails and the model continues, so `ask` needs no
   user configuration. An apparent hang on one is the stdin stall above. Rejection

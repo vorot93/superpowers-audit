@@ -289,7 +289,7 @@ test('reference covers the dispatch contract', () => {
 test('reference covers recovery and identity rules', () => {
   for (const text of [
     'ask the human which mapping entry applies', 'round<N>-prompt.md', 'round<N>-reply.md', 'round<N>.log',
-    'do not poll or sleep', 'Session not found', 'resend only if the round\'s prompt is absent',
+    'do not poll or sleep', 'Session not found', 'Resend only if the round\'s prompt is absent',
     'recovering an existing reply adds no round', 'ask the human if the prompt arrived without a reply',
     // Denied redirections: same command, reply saved by the writer.
     'run the same command without the output redirections', 'background task\'s output',
@@ -301,8 +301,84 @@ test('reference covers recovery and identity rules', () => {
   ]) {
     expect(reference.replace(/\s+/g, ' ')).toContain(text);
   }
-  const exportLines = reference.split('\n').filter(line => line.includes('opencode session export'));
-  expect(exportLines.some(line => line.includes('2>&1'))).toBe(true);
+});
+
+test('reference exports to a file and keeps diagnostics out of the export', () => {
+  const exportCommands = reference.split('\n').filter(line => line.startsWith('opencode session export'));
+  expect(exportCommands).toEqual([
+    "opencode session export '<session id>' > '<work dir>/round<N>-export.json' 2>> '<work dir>/round<N>.log'",
+  ]);
+});
+
+test('reference completion check names the 2.2.5 export evidence', () => {
+  const text = reference.replace(/\s+/g, ' ');
+  for (const phrase of [
+    // Exit 0 does not make an export complete: a pipe can cut it silently.
+    'truncated despite exit 0', 'complete JSON document',
+    // The end-of-turn record; its absence refuses the round rather than waiting.
+    '`idle`', '`outcome: "succeeded"`', 'A missing `idle` record does not show that the turn is still running',
+    // Tool state lives in state.status; executed: false is normal.
+    '`state.status`', '`executed: false`', '`synthetic`',
+    // A stopped dispatch command has no completion notice to wait for.
+    'While the round\'s background command is still running', 'Once it has stopped',
+  ]) expect(text).toContain(phrase);
+});
+
+test("reference's export summary keeps completion evidence and drops tool output", async () => {
+  if (!Bun.which('jq')) throw new Error('jq is required to check the reference export summary');
+  const commands = reference.split('\n').filter(line => line.startsWith('jq '));
+  expect(commands).toHaveLength(1);
+  const fixture = join(repoRoot, 'tests/fixtures/opencode-2.2.5-export.json');
+  const run = async (path: string) => {
+    const child = Bun.spawn(['sh', '-c', commands[0]!.replace("'<work dir>/round<N>-export.json'", `'${path}'`)], {
+      stdout: 'pipe', stderr: 'pipe',
+    });
+    const [stdout, exitCode] = await Promise.all([new Response(child.stdout).text(), child.exited]);
+    return { stdout, exitCode };
+  };
+
+  const { stdout, exitCode } = await run(fixture);
+  expect(exitCode).toBe(0);
+  const transport = (message: string) => ({ type: 'provider.transport', message });
+  expect(stdout.trim().split('\n').map(line => JSON.parse(line))).toEqual([
+    { type: 'agent-switched' },
+    { type: 'user', file: 'round1-prompt.md' },
+    { type: 'assistant', finish: 'tool-calls', completed: 1005, tools: ['completed'], text: 'Reading the target.' },
+    { type: 'assistant', finish: 'stop', completed: 1008, text: '## Assessment\nApproved\n\n## Findings\nNone.' },
+    { type: 'idle', outcome: 'succeeded' },
+    { type: 'agent-switched' },
+    { type: 'user', file: 'round2-prompt.md' },
+    { type: 'assistant', finish: 'error', completed: 1013, error: transport('Timed out waiting for response data') },
+    { type: 'synthetic' },
+    { type: 'idle', outcome: 'failed', error: transport('Timed out waiting for response headers') },
+  ]);
+  expect(stdout).not.toContain('BULKY TOOL OUTPUT');
+
+  // A cut-off export fails visibly instead of summarizing a partial session.
+  const parent = join(homedir(), '.superpowers', 'superpowers-audit');
+  await mkdir(parent, { recursive: true });
+  const root = await mkdtemp(join(parent, 'export-summary-'));
+  try {
+    const truncated = join(root, 'export.json');
+    const full = await readFile(fixture, 'utf8');
+    await writeFile(truncated, full.slice(0, full.indexOf('"msg_06"')));
+    expect((await run(truncated)).exitCode).not.toBe(0);
+  } finally {
+    await rm(root, { recursive: true });
+  }
+});
+
+// Configured mappings share the reference's 10,000-byte hook budget; keep room
+// for six writers' chains plus spare bytes for reference growth.
+test('reference leaves room for a six-writer reviewer configuration', async () => {
+  const reviewers = ['xai/grok-4.7#xhigh', 'openai/gpt-6-astra#high', 'zai-coding-plan/glm-5.3#max'];
+  const writers = ['opus-5-5', 'fable-5-1', 'sonnet-5-5', 'haiku-5-5', 'opus-5-1', 'sonnet-5-1'];
+  const context = await auditContext({
+    CLAUDE_PLUGIN_OPTION_REVIEWERS: writers.flatMap(w => reviewers.map(r => `anthropic/claude-${w}=${r}`)).join(','),
+    CLAUDE_PLUGIN_OPTION_ARTIFACTDIRECTORY: '/Users/someone/.superpowers/superpowers-audit',
+  });
+  expect(context.startsWith(reference + '\n## Configuration\n')).toBe(true);
+  expect(Buffer.byteLength(context)).toBeLessThanOrEqual(9_500);
 });
 
 test('SessionStart compact emits the reload pointer', async () => {

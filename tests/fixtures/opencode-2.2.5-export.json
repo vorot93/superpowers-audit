@@ -1,0 +1,51 @@
+{
+  "info": {
+    "id": "ses_audit20261105000000fixture",
+    "agent": "explore",
+    "model": { "id": "fixture-model", "providerID": "fixture", "variant": "high" },
+    "title": "audit: fixture",
+    "outcome": "failed",
+    "time": { "created": 1000, "updated": 2000 }
+  },
+  "messages": [
+    { "id": "msg_01", "time": { "created": 1001 }, "type": "agent-switched", "agent": "explore", "previous": "explore" },
+    {
+      "id": "msg_02", "time": { "created": 1002 }, "type": "user", "files": [],
+      "text": "\"Your audit assignment for this round is the attached file, already delivered with this message; follow it exactly and reply in the format it specifies.\"\n\n<file name=\"round1-prompt.md\">\nRole: independent auditor of a specification.\n</file>"
+    },
+    {
+      "id": "msg_03", "time": { "created": 1003, "streamed": 1004, "completed": 1005 }, "type": "assistant",
+      "agent": "explore", "finish": "tool-calls", "rawFinish": "tool_calls",
+      "content": [
+        { "type": "reasoning", "text": "Read the target first." },
+        { "type": "text", "text": "Reading the target." },
+        {
+          "type": "tool", "id": "call_01", "name": "read", "executed": false,
+          "time": { "created": 1003, "ran": 1004, "completed": 1005 },
+          "state": { "status": "completed", "input": { "path": "spec.md" }, "content": "BULKY TOOL OUTPUT THE SUMMARY OMITS", "metadata": {} }
+        }
+      ]
+    },
+    {
+      "id": "msg_04", "time": { "created": 1006, "streamed": 1007, "completed": 1008 }, "type": "assistant",
+      "agent": "explore", "finish": "stop",
+      "content": [
+        { "type": "reasoning", "text": "Done." },
+        { "type": "text", "text": "## Assessment\nApproved\n\n## Findings\nNone." }
+      ]
+    },
+    { "id": "msg_05", "time": { "created": 1009 }, "type": "idle", "outcome": "succeeded" },
+    { "id": "msg_06", "time": { "created": 1010 }, "type": "agent-switched", "agent": "explore", "previous": "explore" },
+    {
+      "id": "msg_07", "time": { "created": 1011 }, "type": "user", "files": [],
+      "text": "\"Your audit assignment for this round is the attached file, already delivered with this message; follow it exactly and reply in the format it specifies.\"\n\n<file name=\"round2-prompt.md\">\nRound: 2 / 5 for this reviewer on this target.\n</file>"
+    },
+    {
+      "id": "msg_08", "time": { "created": 1012, "completed": 1013 }, "type": "assistant", "agent": "explore", "finish": "error",
+      "error": { "type": "provider.transport", "message": "Timed out waiting for response data" },
+      "content": [{ "type": "reasoning", "text": "Checking the fixes." }]
+    },
+    { "id": "msg_09", "time": { "created": 1014 }, "type": "synthetic", "text": "The previous response was interrupted. Continue from where you left off without repeating completed content." },
+    { "id": "msg_10", "time": { "created": 1015 }, "type": "idle", "outcome": "failed", "error": { "type": "provider.transport", "message": "Timed out waiting for response headers" } }
+  ]
+}

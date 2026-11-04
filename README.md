@@ -112,10 +112,13 @@ After handoff, direct human edits or changes they request receive self-review an
 a fresh audit.
 
 In Claude Code, the writer checks the auditor's session export before accepting
-each round, including a normal CLI exit. A delivered prompt, tool-call message,
-or approval heading does not establish a completed assessment. Recovery requires
-both final-message completion evidence and a complete answer. A confirmed running
-turn is awaited; incomplete or uncertain completion goes to the human under the
+each round, including a normal CLI exit. It exports to a file and reads a `jq`
+summary that omits the auditor's tool output; without `jq` it reads the whole
+export. A delivered prompt, tool-call message, or approval heading does not
+establish a completed assessment. Acceptance requires the round's final-message
+completion evidence, a succeeded end-of-turn record, and a complete answer, from a
+complete export. The writer waits only while the dispatch command itself is still
+running; incomplete or uncertain completion goes to the human under the
 Failed-member rules. Recovering an existing final reply consumes no extra round;
 only a completed answer with a genuine format defect can need a counted restatement.
 
@@ -299,11 +302,14 @@ audits after actual human edits or requested changes. The question-revision prob
 used a controller-authored instruction. Unit/package tests, registry checks, and
 interpretation scenarios do not close these gaps.
 
-The completion gate's CLI field names were checked on an existing OpenCode 2.2.5
-session export: both tool-call steps and the final reply carry `time.completed`,
-while their `finish` values differ. This verifies the CLI export shape, not recovery
-from interruption, token-limit truncation, or a client disconnect with a still-running
-auditor. Those completion-gate paths have not been exercised live.
+The completion gate's CLI fields were checked on existing OpenCode 2.2.5 session
+exports, one with a provider transport failure: tool-call steps and final replies
+both carry `time.completed` with different `finish` values, each round ends with an
+`idle` record (`succeeded` or `failed`), and completed tool parts report
+`executed: false`. The reference's `jq` summary was checked on those shapes. This
+verifies the CLI export shape, not live recovery from interruption, token-limit
+truncation, or a client disconnect with a still-running auditor; nor whether Claude
+Code's Bash tool truncates an export captured without redirection.
 
 ## Development
 
@@ -315,7 +321,8 @@ bun run test:package
 bun run test:claude
 ```
 
-`test:claude` runs `claude plugin validate .` and needs the `claude` CLI.
+`test:claude` runs `claude plugin validate .` and needs the `claude` CLI. The unit
+suite needs `jq` to check the Claude Code reference's export summary.
 
 Package tests exercise a source-only tarball with production dependencies. To
 distribute one after these checks, run
