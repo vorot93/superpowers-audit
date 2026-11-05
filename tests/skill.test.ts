@@ -166,6 +166,20 @@ test('shared skill defines the sequential reviewer chain', async () => {
   expect(text).not.toContain('ask before starting a replacement audit');
 });
 
+test('shared skill keeps the writer responsible for findings', async () => {
+  const text = flat(await sharedBody());
+  for (const anchor of [
+    "Verify claims against the current documents, cited sources, and the human's actual answers in the writer's conversation, not only against the review context written for the auditor.",
+    'Accept or dispute each with evidence.',
+    'Accept a finding only when the evidence supports it.',
+    "Never concede a finding the writer still disputes, or change a question's choices contrary to confirmed constraints.",
+    'Apply justified in-scope corrections using ordinary writer tools; self-check them without restarting brainstorming.',
+    'If an exhausting round leaves justified findings the writer accepts, apply them before starting the next member,',
+    'The writer still evaluates and applies every correction.',
+    '| Approved | The member accepted the version at its last round and the writer has no remaining blocking objection. |',
+  ]) expect(text).toContain(anchor);
+});
+
 // These full-text snapshots review the rendered artifact, not model obedience.
 // Native pressure scenarios require separate controller-owned verification.
 for (const [name, input] of [

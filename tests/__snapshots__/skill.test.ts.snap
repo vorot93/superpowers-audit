@@ -227,11 +227,15 @@ The auditor works read-only by task instruction under ordinary
 host permissions; this is not a sandbox.
 
 Read every finding, following host output references or pages if needed. Verify
-claims against the current documents. Accept or dispute each with evidence. Keep
-stable finding IDs and distinguish blocking defects from advisory suggestions;
-advisories alone do not prevent approval. Distinguish known execution context from
-human-supplied authorship. A subagent writer continues its existing authoring
-session where native continuation is available. Make any writer takeover explicit.
+claims against the current documents, cited sources, and the human's actual answers
+in the writer's conversation, not only against the review context written for the
+auditor. Accept or dispute each with evidence. Accept a finding only when the
+evidence supports it. Never concede a finding the writer still disputes, or change
+a question's choices contrary to confirmed constraints. Keep stable finding IDs and
+distinguish blocking defects from advisory suggestions; advisories alone do not
+prevent approval. Distinguish known execution context from human-supplied
+authorship. A subagent writer continues its existing authoring session where native
+continuation is available. Make any writer takeover explicit.
 
 Apply justified in-scope corrections using ordinary writer tools; self-check them
 without restarting brainstorming. Ask the human before a material requirement,
@@ -725,11 +729,15 @@ The auditor works read-only by task instruction under ordinary
 host permissions; this is not a sandbox.
 
 Read every finding, following host output references or pages if needed. Verify
-claims against the current documents. Accept or dispute each with evidence. Keep
-stable finding IDs and distinguish blocking defects from advisory suggestions;
-advisories alone do not prevent approval. Distinguish known execution context from
-human-supplied authorship. A subagent writer continues its existing authoring
-session where native continuation is available. Make any writer takeover explicit.
+claims against the current documents, cited sources, and the human's actual answers
+in the writer's conversation, not only against the review context written for the
+auditor. Accept or dispute each with evidence. Accept a finding only when the
+evidence supports it. Never concede a finding the writer still disputes, or change
+a question's choices contrary to confirmed constraints. Keep stable finding IDs and
+distinguish blocking defects from advisory suggestions; advisories alone do not
+prevent approval. Distinguish known execution context from human-supplied
+authorship. A subagent writer continues its existing authoring session where native
+continuation is available. Make any writer takeover explicit.
 
 Apply justified in-scope corrections using ordinary writer tools; self-check them
 without restarting brainstorming. Ask the human before a material requirement,

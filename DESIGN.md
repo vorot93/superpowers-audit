@@ -4,8 +4,11 @@
 
 The plugin supplies a shared skill, a command, and Superpowers skill adaptations.
 The existing writer owns the conversation: it retains authoring context, evaluates
-findings, edits documents, consults the human, and publishes the report. The hosts
-own everything else:
+findings, edits documents, consults the human, and publishes the report. It verifies
+reviewer claims against primary evidence, including the human's actual answers,
+because the review context it wrote for the auditor can carry its own mistakes. It
+accepts only supported findings; the shared outcome table classifies a disagreement
+that remains, rather than the writer conceding it. The hosts own everything else:
 
 - In OpenCode, OpenCode owns subagent execution, permissions, session continuation,
   and interruption.
